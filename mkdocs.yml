@@ -1,1 +1,9 @@
-site_name: Oriol Alfonso Docs
+site_name: oalfonso
+site_url: https://oalfonso.com/
+nav:
+    - Home: index.md
+    - Posts: posts.md
+    - About: about.md
+theme:
+    # name: mkdocs
+    name: material
