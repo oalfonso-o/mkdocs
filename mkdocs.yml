@@ -3,6 +3,7 @@ site_url: https://oalfonso.com/
 nav:
     - Home: index.md
     - Posts: posts.md
+    - Projects: projects.md
     - About: about.md
 theme:
     name: material

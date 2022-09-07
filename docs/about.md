@@ -1,7 +1,9 @@
-# About
+# About Oriol Alfonso
 
-lorem
+Software Egineer focused in the Data Engineering.
 
-## Se vienen cositas
+Tech lead since 2019
 
-    item 1        # x
+Engineering Manager since 2022
+
+TODO

@@ -1,17 +1,16 @@
-# Welcome to MkDocs
+# Oriol Alfonso
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+Here you can find some relevant information about my career as a Software Engineer.
 
-## Commands
+An extract of my career can be found in [About](about.md)
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+Some personal side projects are explained in [Projects](projects.md)
 
-## Project layout
+And some posts of interesting topics and technologies in [Posts](posts.md)
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+Feel free to reach me out to make me any question or to discuss anything IT related, I'll be more than happy to answer:
+
+- email: oriol@oalfonso.com
+- twitter: @oalfonso_o
+- linkedin: oalfonso_o -> TODO
+- instagram: @oalfonso_o
