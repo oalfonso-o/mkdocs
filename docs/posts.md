@@ -44,3 +44,5 @@ We have heard about 10x engineers, this can be polemic or not but it's a reality
 * [Kafka](posts/kafka.md):
 Understanding Kafka, pros and cons, and in which cases you should or shouldn't need it instead of simpler approaches. Using a real life example of paying the price of Kafka's complexity for a data pipeline that could be defined much simpler because it wasn't going to use the benefits of Kafka.
 
+* [Airflow](posts/airflow.md):
+Let's orchestrate our ETLs with Airflow, a webserver, an scheduler, a broker and some Celery workers to do our work when we need.
