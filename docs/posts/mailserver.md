@@ -140,7 +140,6 @@ For example in my case:
     smtpd_banner = $myhostname ESMTP $mail_name ({REPLACE_YOURDISTRO})
     append_dot_mydomain = no
     compatibility_level = 2
-    # relayhost = 
 
     # Network
     mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
@@ -271,6 +270,11 @@ Brief description of each parameter:
     - [append_dot_mydomain](https://www.postfix.org/postconf.5.html#append_dot_mydomain): prevents sending emails to things like "user@partialdomainname" because the `.com` won't be automatically added. We prefer to don't modify the domains.
     - [compatibility_level](https://www.postfix.org/postconf.5.html#compatibility_level): To not go into too many details, less than 2 can accept backwards compatibility but as we are installing this version from scratch we can set all the configuration parameters without backwards compatibility.
 - Network
+    - [mynetworks](https://www.postfix.org/postconf.5.html#mynetworks): The list of "trusted" remote SMTP clients that are allowed to relay mail through Postfix.
+    - [inet_interfaces](https://www.postfix.org/postconf.5.html#inet_interfaces): The local network interface addresses that this mail system receives mail on
+    - [smtp_bind_address](https://www.postfix.org/postconf.5.html#smtp_bind_address): IP used to send emails. Needed if we have multiple interfaces, and more important if they are public interfaces, because we will setup DNS records to give us more truthworthship that will declare our public IP as the source of the server and it has to match to the IP used by Postfix, if not other SMTP servers can decide to don't trust us.
+    - [inet_protocols](https://www.postfix.org/postconf.5.html#inet_protocols): The Internet protocols Postfix will attempt to use when making or accepting connections, options: ipv4, ipv6 or all which are both.
+    - [smtp_address_preference](https://www.postfix.org/postconf.5.html#smtp_address_preference): Try to use this protocol before the other, if ipv4 specified Postfix will use ipv4 always as the first option.
 - TLS
 - Restrictions
 - Auth
