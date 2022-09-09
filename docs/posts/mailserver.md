@@ -1,6 +1,6 @@
 # Mail Server with Postfix and Dovecot
 
-This post explains how to setup a [Postfix](https://www.postfix.org/) [SMTP](https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol) server and a [Devocot](https://www.dovecot.org/) [IMAP](https://en.wikipedia.org/wiki/Internet_Message_Access_Protocol) server for personal use.
+This post explains how to setup a [Postfix](https://www.postfix.org/) [SMTP](https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol) server and a [Dovecot](https://www.dovecot.org/) [IMAP](https://en.wikipedia.org/wiki/Internet_Message_Access_Protocol) server for personal use.
 For entreprise I recommend selecting a trusted vendor.
 
 This post will go through:
@@ -314,7 +314,7 @@ And last, `submission`:
 
 Is doing x movidas and look at the `-o`, those override the parameters present in `main.cf`
 
-## Devocot time
+## Dovecot time
 
 ## Certificates
 
