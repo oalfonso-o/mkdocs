@@ -82,3 +82,5 @@ extra:
     - icon: fontawesome/brands/pied-piper-alt
       link: https://youtu.be/xvFZjo5PgG0
       name: Pied Piper oalfonso_o profile
+extra_css:
+  - stylesheets/extra.css

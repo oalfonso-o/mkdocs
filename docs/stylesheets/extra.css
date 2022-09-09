@@ -1,0 +1,31 @@
+.md-footer__link {
+    display: flex;
+    flex-grow: 0.01;
+    outline-color: var(--md-accent-fg-color);
+    overflow: hidden;
+    padding-top: 0.8rem;
+    padding-bottom: 0rem;
+    transition: opacity .25s;
+}
+.md-social {
+    margin-top: 0.3rem;
+    padding: .2rem 0 .6rem;
+}
+
+.md-tabs__link {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    display: block;
+    font-size: .7rem;
+    margin-top: 0.2rem;
+    opacity: .7;
+    outline-color: var(--md-accent-fg-color);
+    outline-offset: .2rem;
+    transition: transform .4s cubic-bezier(.1,.7,.1,1),opacity .25s;
+}
+.md-tabs__item {
+    display: inline-block;
+    height: 1.8rem;
+    padding-left: .6rem;
+    padding-right: .6rem;
+  }
