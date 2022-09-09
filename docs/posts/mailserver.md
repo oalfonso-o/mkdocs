@@ -77,7 +77,7 @@ So the whole traveling would be something like this:
     - authenticates `[Alice client]` (if no auth, no email)
     - provides the email contents to `[Alice client]`
 6. `[Alice client]`:
-    - enjoys Bob's [content](https://youtu.be/xvFZjo5PgG0)
+    - enjoys Bob's [content](https://youtu.be/xvFZjo5PgG0){target=_blank}
 
 So:
 

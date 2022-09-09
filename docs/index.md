@@ -2,11 +2,11 @@
 
 Here you can find some relevant information about my career as a Software Engineer.
 
-An extract of my career can be found in [About](about.md)
+Some posts of interesting topics and technologies in [Posts](posts/index.md)
 
-Some personal side projects are explained in [Projects](projects.md)
+Some personal side projects are explained in [Projects](projects/index.md)
 
-And some posts of interesting topics and technologies in [Posts](posts.md)
+And an extract of my career can be found in [About](about.md)
 
 Feel free to reach me out to make me any question or to discuss anything IT related, I'll be more than happy to answer:
 

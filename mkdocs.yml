@@ -1,15 +1,63 @@
 site_name: oalfonso
 site_url: https://oalfonso.com/
 nav:
-    - Home: index.md
-    - Posts: posts.md
-    - Projects: projects.md
+  - Home:
+    - index.md
+    - Posts: posts/index.md
+    - Projects: projects/index.md
     - About: about.md
+  - Posts:
+    - posts/index.md
+    - Mail Server with Postfix and Dovecot: posts/mailserver.md
+    - Ansible: posts/ansible.md
+    - Terraform: posts/terraform.md
+    - Spark: posts/spark.md
+    - Python Asyncio: posts/python_async.md
+    - Python Multiprocessing: posts/python_async.md
+    - Python Threading: posts/python_async.md
+    - Elasticsearch: posts/elasticsearch.md
+    - MongoDB: posts/mongodb.md
+    - Clickhouse: posts/clickhouse.md
+    - KISS: posts/kiss.md
+    - Scaling a Company: posts/scaling_a_company.md
+    - Team Culture: posts/team_culture.md
+    - Kafka: posts/kafka.md
+    - Airflow: posts/airflow.md
+  - Projects:
+    - projects/index.md
+    - Crossbox: projects/crossbox.md
+    - Balaland: projects/balaland.md
+    - Candlebot: projects/candlebot.md
+  - About: about.md
 theme:
-    name: material
-    features:
-        - content.code.annotate
-    # name: mkdocs
+  name: material
+  icon:
+    logo: octicons/command-palette-24
+  favicon: assets/favicon.svg
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      primary: white
+      accent: deep orange
+      toggle:
+        icon: material/brightness-2
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - scheme: slate
+      primary: black
+      accent: deep orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to light mode
+  features:
+    - content.code.annotate
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.indexes
+    - navigation.expand
+    - toc.follow
+    - navigation.top
 markdown_extensions:
   - attr_list
   - pymdownx.highlight:
@@ -19,3 +67,18 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.tabbed:
       alternate_style: true
+extra:
+  social:
+    - icon: octicons/mail-24
+      link: mailto:oriol@oalfonso.com
+    - icon: fontawesome/brands/github
+      link: https://github.com/oalfonso-o
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/oalfonso_o
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/oriol-alfonso-riba-a198439b/
+    - icon: fontawesome/brands/instagram
+      link: https://www.instagram.com/oalfonso_o/
+    - icon: fontawesome/brands/pied-piper-alt
+      link: https://youtu.be/xvFZjo5PgG0
+      name: Pied Piper oalfonso_o profile
