@@ -152,14 +152,12 @@ For example in my case:
     smtpd_tls_cert_file=/etc/letsencrypt/live/mail.{REPLACE_YOURDOMAIN}/fullchain.pem
     smtpd_tls_key_file=/etc/letsencrypt/live/mail.{REPLACE_YOURDOMAIN}/privkey.pem
     smtpd_tls_security_level = encrypt
-    smtpd_tls_protocols = !SSLv2, !SSLv3
+    smtpd_tls_protocols = >=TLSv1.2
     smtpd_tls_loglevel = 1
     smtpd_tls_received_header = yes
     smtpd_tls_auth_only = yes
     smtp_tls_note_starttls_offer = yes
-    smtp_tls_CApath=/etc/ssl/certs
     smtp_tls_security_level = encrypt
-    smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
 
     # Restrictions
     smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
@@ -261,7 +259,7 @@ Let's try to understand it first.
 Brief description of each parameter:
 
 - ID:
-    - [myhostname](https://www.postfix.org/postconf.5.html#myhostname): This is the FQDN that must have an MX DNS record pointing to this IP
+    - [myhostname](https://www.postfix.org/postconf.5.html#myhostname): This is the [FQDN](https://en.wikipedia.org/wiki/Fully_qualified_domain_name){target=_blank} that must have an [MX DNS](https://en.wikipedia.org/wiki/MX_record){target=_blank} record pointing to this IP
     - [myorigin](https://www.postfix.org/postconf.5.html#myorigin): The contents of `/etc/mailname` should contain a valid hostname for your mail server. This is used by applications like cron, we can put the same as $myhostname in `/etc/mailname`.
     - [mydestination](https://www.postfix.org/postconf.5.html#mydestination): This parameter specifies the domains from which we will accept emails to be sent. So if you send a request from a `bob@mail.com` and `mail.com` is not in this list, `bob` will have to find another way to send his email.
 - General:
@@ -276,6 +274,15 @@ Brief description of each parameter:
     - [inet_protocols](https://www.postfix.org/postconf.5.html#inet_protocols): The Internet protocols Postfix will attempt to use when making or accepting connections, options: ipv4, ipv6 or all which are both.
     - [smtp_address_preference](https://www.postfix.org/postconf.5.html#smtp_address_preference): Try to use this protocol before the other, if ipv4 specified Postfix will use ipv4 always as the first option.
 - TLS
+    - [smtpd_tls_cert_file](https://www.postfix.org/postconf.5.html#smtpd_tls_cert_file): TLS cert, we will request one from Letsencrypt with Certbot
+    - [smtpd_tls_key_file](https://www.postfix.org/postconf.5.html#smtpd_tls_key_file): TLS key, we will request one from Letsencrypt with Certbot
+    - [smtpd_tls_security_level](https://www.postfix.org/postconf.5.html#smtpd_tls_security_level): Specify `encrypt` for mandatory TLS encryption for the SMTP server.
+    - [smtpd_tls_protocols](https://www.postfix.org/postconf.5.html#smtpd_tls_protocols): Declare the accepted protocols for TLS, we only want v1.2 or greater.
+    - [smtpd_tls_loglevel](https://www.postfix.org/postconf.5.html#smtpd_tls_loglevel): Use 2 or higher to debug problems, if not, it can be with 0 as default which is disabled or 1 which is the basic.
+    - [smtpd_tls_received_header](https://www.postfix.org/postconf.5.html#smtpd_tls_received_header): Add TLS details in the Received field, so when inspecting the original message received from others we can check the TLS details.
+    - [smtpd_tls_auth_only](https://www.postfix.org/postconf.5.html#smtpd_tls_auth_only):  When TLS encryption is optional in the Postfix SMTP server, do not announce or accept SASL authentication over unencrypted connections.
+    - [smtp_tls_note_starttls_offer](https://www.postfix.org/postconf.5.html#smtp_tls_note_starttls_offer):  Log the hostname of a remote SMTP server that offers STARTTLS, when TLS is not already enabled for that server.
+    - [smtp_tls_security_level](https://www.postfix.org/postconf.5.html#smtp_tls_security_level): Use `encrypt` to force the SMTP client to use TLS.
 - Restrictions
 - Auth
 - Mail config
