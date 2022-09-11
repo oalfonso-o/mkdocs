@@ -159,11 +159,6 @@ For example in my case:
     smtp_tls_note_starttls_offer = yes
     smtp_tls_security_level = encrypt
 
-    # Restrictions
-    smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
-    smtpd_recipient_restrictions=permit_mynetworks,permit_sasl_authenticated
-    smtpd_reject_unlisted_recipient=no
-
     # Auth
     smtpd_sasl_type = dovecot
     smtpd_sasl_path = private/auth
@@ -283,7 +278,6 @@ Brief description of each parameter:
     - [smtpd_tls_auth_only](https://www.postfix.org/postconf.5.html#smtpd_tls_auth_only):  When TLS encryption is optional in the Postfix SMTP server, do not announce or accept SASL authentication over unencrypted connections.
     - [smtp_tls_note_starttls_offer](https://www.postfix.org/postconf.5.html#smtp_tls_note_starttls_offer):  Log the hostname of a remote SMTP server that offers STARTTLS, when TLS is not already enabled for that server.
     - [smtp_tls_security_level](https://www.postfix.org/postconf.5.html#smtp_tls_security_level): Use `encrypt` to force the SMTP client to use TLS.
-- Restrictions
 - Auth
 - Mail config
 - Aliases
