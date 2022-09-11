@@ -168,7 +168,6 @@ For example in my case:
     mailbox_size_limit = 0
     recipient_delimiter = +
     home_mailbox = Maildir/
-    local_recipient_maps = proxy:unix:passwd.byname $alias_maps
 
     # Aliases
     alias_maps = hash:/etc/aliases
@@ -282,6 +281,9 @@ Brief description of each parameter:
     - [smtpd_sasl_path](https://www.postfix.org/postconf.5.html#smtpd_sasl_path): Relative path to $queue_directory used to comunicate Postfix and Dovecot. This can also be configured via TCP.
     - [smtpd_sasl_auth_enable](https://www.postfix.org/postconf.5.html#smtpd_sasl_auth_enable): To enable SASL.
 - Mail config
+    - [mailbox_size_limit](https://www.postfix.org/postconf.5.html#mailbox_size_limit): Use 0 for unlimited mailbox size, the limit will be the host disk.
+    - [recipient_delimiter](https://www.postfix.org/postconf.5.html#recipient_delimiter): Postfix allows you to specify a character to separate the user from an additional string. For example with a `+` as `recipient_delimiter` we can have the mail `user@mail.com` and also `user+extrastring@mail.com` and we will get the mails delivered to `user`. This is helpful for example when we want to check if a third party who has our address is providing our address to others, for example we provide to `randomco.com` our address `user+rco@mail.com` and later we receive an email from `spamco.com` to `user+rco@mail.com`, that is pretty clear, `randomco.com` has not being playing fair.
+    - [home_mailbox](https://www.postfix.org/postconf.5.html#home_mailbox): The default dir in the home of each user which will contain all the mails.
 - Aliases
 - Milter
     - [milter_macro_daemon_name](https://www.postfix.org/postconf.5.html#milter_macro_daemon_name): The name of the daemon of the [milter](https://en.wikipedia.org/wiki/Milter) that we are going to configure together with [OpenDKIM](http://www.opendkim.org/) to be more trustful, ignore for now.
