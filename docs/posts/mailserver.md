@@ -163,7 +163,6 @@ For example in my case:
     smtpd_sasl_type = dovecot
     smtpd_sasl_path = private/auth
     smtpd_sasl_auth_enable=yes
-    smtpd_sasl_security_options = noanonymous
 
     # Mail config
     mailbox_size_limit = 0
@@ -279,6 +278,9 @@ Brief description of each parameter:
     - [smtp_tls_note_starttls_offer](https://www.postfix.org/postconf.5.html#smtp_tls_note_starttls_offer):  Log the hostname of a remote SMTP server that offers STARTTLS, when TLS is not already enabled for that server.
     - [smtp_tls_security_level](https://www.postfix.org/postconf.5.html#smtp_tls_security_level): Use `encrypt` to force the SMTP client to use TLS.
 - Auth
+    - [smtpd_sasl_type](https://www.postfix.org/postconf.5.html#smtpd_sasl_type): As [SASL](https://en.wikipedia.org/wiki/Simple_Authentication_and_Security_Layer){target=_blank} type we will specify `dovecot` to use the auth system of our IMAP server.
+    - [smtpd_sasl_path](https://www.postfix.org/postconf.5.html#smtpd_sasl_path): Relative path to $queue_directory used to comunicate Postfix and Dovecot. This can also be configured via TCP.
+    - [smtpd_sasl_auth_enable](https://www.postfix.org/postconf.5.html#smtpd_sasl_auth_enable): To enable SASL.
 - Mail config
 - Aliases
 - Milter
