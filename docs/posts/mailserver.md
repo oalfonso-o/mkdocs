@@ -280,10 +280,19 @@ Brief description of each parameter:
     - [recipient_delimiter](https://www.postfix.org/postconf.5.html#recipient_delimiter): Postfix allows you to specify a character to separate the user from an additional string. For example with a `+` as `recipient_delimiter` we can have the mail `user@mail.com` and also `user+extrastring@mail.com` and we will get the mails delivered to `user`. This is helpful for example when we want to check if a third party who has our address is providing our address to others, for example we provide to `randomco.com` our address `user+rco@mail.com` and later we receive an email from `spamco.com` to `user+rco@mail.com`, that is pretty clear, `randomco.com` has not being playing fair.
     - [home_mailbox](https://www.postfix.org/postconf.5.html#home_mailbox): The default dir in the home of each user which will contain all the mails.
 - Milter (Mail filter)
-    - [milter_macro_daemon_name](https://www.postfix.org/postconf.5.html#milter_macro_daemon_name): The name of the daemon of the [milter](https://en.wikipedia.org/wiki/Milter) that we are going to configure together with [OpenDKIM](http://www.opendkim.org/) to be more trustful, ignore for now.
+    - [milter_macro_daemon_name](https://www.postfix.org/postconf.5.html#milter_macro_daemon_name): The name of the daemon of the [milter](https://en.wikipedia.org/wiki/Milter) that we are going to configure together with [OpenDKIM](http://www.opendkim.org/) to be more trustful.
     - [milter_default_action](https://www.postfix.org/postconf.5.html#milter_default_action): We set `accept` because we don't want to filter in Postfix, we will filter with OpenDKIM.
     - [smtpd_milters](https://www.postfix.org/postconf.5.html#smtpd_milters): The TCP port where our milter will be working, which will be the one of OpenDKIM
     - [non_smtpd_milters](https://www.postfix.org/postconf.5.html#non_smtpd_milters): The TCP port where our milter will be working, which will be the one of OpenDKIM
+
+This is a good overview of the parameters and the meaning of each one, now let's list the ones that are not currently working because they depend on other actions:
+
+- **myhostname, mydestination**: we need a domain name
+- **smtpd_tls_cert_file, smtpd_tls_key_file**: we need TLS certificates
+- **smtpd_sasl_\***: we need Dovecot
+- **smtpd_milters, non_smtpd_milters**: we need OpenDKIM
+
+We will tackle these actions in the next steps.
 
 ### Config file `master.cf`
 
