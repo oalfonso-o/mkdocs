@@ -423,7 +423,47 @@ This is enough for now, let's move to the [Certificates](#certificates) section 
 
 ## Certificates
 
-To ensure that our communication between the clients and the server and between our server and other servers is secure we need to add a layer called [TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security) which encrypts our content TODO
+The main goals of this step are:
+
+1. Encrypt our content
+2. Be more trustful
+
+To ensure that our communication between the clients and the server and between our server and other servers is secure we need to add a layer called [TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security) which encrypts our content. To encrypt the content with TLS normally we use a public key and a private key. The public key can be shared anywhere and the content encrypted with this public key can be decrypted with the private key which has to be properly custodied. This is known as asymmetric encryption.
+
+The process that we will follow is the same that we would do to use HTTPS instead of HTTP.
+
+We need to generate a TLS certificate and a private key and both have to be signed by a Certificate Authority. This Certificate Authority is the one that gives trustiness to our TLS certificate. We can send a [CSR](https://en.wikipedia.org/wiki/Certificate_signing_request) to any [trusted certificate authority](https://en.wikipedia.org/wiki/Certificate_authority#Providers) and get our signed certificate and signed key which can be used to encrypt and decrypt the content and will also be trusted by third parties because they will be generated with the conditions of these CAs which are also trusted. This is known as the [chain of trust](https://en.wikipedia.org/wiki/Chain_of_trust). We can also generate a root certificate and declare ourselves as a CA and sign our own certificate but nobody in the public internet (like gmail) is going to trust us, that's why we need to issue our cert to a trusted CA. Normally signing a certificate by a trusted CA has an economic cost which important companies pay because that gives more trust, like a banking online platform, they want their green padlock with the name of their company there, that comes with an economic cost. But this is not our case, we can issue our signed cert to a free and automated CA like [Letsencrypt](https://letsencrypt.org/) and use [Certbot](https://certbot.eff.org/) to make the request of this signed cert a bit easier.
+
+Certbot requests the certificates to Letsencrypt using different challenges, one of them requires access via HTTP to out host, that's why we need to have also an HTTP server running. For our case we will use [NGINX](https://www.nginx.com/).
+
+So let's start, first we need to install Certbot and NGINX
+
+``` bash linenums="1"
+apt install certbot
+apt install nginx
+```
+!!! info ""
+
+    We need our nginx service running, we can check it with `systemctl status nginx` and in case it's not running we can start it with `systemctl start nginx`
+
+Let's create an nginx site that will be the one use to solve the challenges by Letsencrypt and validate that we are the owners of the domain name so we can get valid and trusted TLS certificates for our domain name and nobody else can:
+
+``` nginx title="/etc/nginx/snippets/letsencrypt.conf"
+--8<--
+posts/mailserver/letsencrypt.conf
+--8<--
+```
+``` nginx title="/etc/nginx/sites-enabled/mail.mydomain.com"
+--8<--
+posts/mailserver/nginx_site
+--8<--
+```
+!!! info ""
+
+    Ideally NGINX sites should be placed in the `/etc/nginx/sites-available` and then create a soft link from this file to `/etc/nginx/sites-enabled` and then reload nginx to serve this site instead of just creating them in `sites-enabled`, but this is just a convention so we don't "have" to. If you prefer to do things properly I recommend to do it.
+
+
+
 
 ## DNS
 
