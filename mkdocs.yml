@@ -59,6 +59,7 @@ theme:
     - toc.follow
     - navigation.top
 markdown_extensions:
+  - tables
   - toc:
       permalink: "#"
   - attr_list

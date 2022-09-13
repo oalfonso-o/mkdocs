@@ -282,7 +282,50 @@ openssl dhparam 4096 > /root/dovecot/dh.pem
 ```
 &nbsp;<br>
 
-This is enough for now, let's move to the [Certificates](#certificates) section which is also needed for [Postfix](#postfix)
+This is enough for now, let's move to the [DNS](#dns) and [Certificates](#certificates) section which is also needed for [Postfix](#postfix)
+
+## DNS
+
+First of all mention that we will come back to configure DNS but we need some basics.
+
+We need a domain name bought and somewhere to configure the DNS zones of this domain.
+
+For example, with [Google Domains](https://domains.google/) you have the [registrar](https://domains.google.com/registrar/?pli=1&authuser=1) with basic DNS Zones management where you can manage custom records.
+
+Depending on the domain provider and the DNS zones management provider the configuration will be one or other but the concept is the same, we will need to define a couple of records:
+
+Imagine that our domain is `oalfonso.com` and the IP is 1.2.3.4, the records will be:
+
+| Hostname            | Type  | Data                 |
+| ------------------- | ----- |--------------------- |
+| `oalfonso.com`      | A     | 1.2.3.4              |
+| `mail.oalfonso.com` | A     | 1.2.3.4              |
+| `oalfonso.com`      | MX    | 0 mail.oalfonso.com. |
+
+The important part here is this, extracted from [Wikipedia MX Record page](https://en.wikipedia.org/wiki/MX_record):
+
+> When an e-mail message is sent through the Internet, the sending mail transfer agent (MTA) queries the Domain Name System for the MX records of each recipient's domain name. This query returns a list of host names of mail exchange servers accepting incoming mail for that domain and their preferences.
+
+So we need:
+
+- The main A record pointing our oalfonso.com to our IP
+- The main A record of our mail DNS zone mail.oalfonso.com pointing to our IP too
+- The main MX record of our oalfonso.com which is the one that will be after the `@` and the one used by other SMTP servers to get the mail server `mail.oalfonso.com` from this MX record. Once they have the `mail.oalfonso.com` address they can get the IP with the A record.
+
+Now we have to wait until the public DNS servers replicate our records. We can use `dig` to validate that the public DNS that we are using from our host has these records replicated, if we don't see them it can be because it's taking long to replicate or because we did something wrong:
+
+``` bash
+$ dig +noall +answer +multiline oalfonso.com a
+oalfonso.com.		57 IN A	1.2.3.4
+
+$ dig +noall +answer +multiline mail.oalfonso.com a
+mail.oalfonso.com.	1927 IN	A 1.2.3.4
+
+$ dig +noall +answer +multiline oalfonso.com mx
+oalfonso.com.		3224 IN	MX 0 mail.oalfonso.com.
+```
+
+With this we can request our certificates, let's move to [Certificates](#certificates) section.
 
 ## Certificates
 
@@ -307,8 +350,10 @@ So let's start, first we need to install Certbot and NGINX
     nginx v1.18.0 used in this post
 
 ``` bash linenums="1"
-apt install certbot
-apt install nginx
+$ add-apt-repository ppa:certbot/certbot
+$ apt update
+$ apt install certbot
+$ apt install nginx
 ```
 &nbsp;<br>
 !!! info ""
@@ -331,10 +376,55 @@ posts/mailserver/nginx_site
 
     Ideally NGINX sites should be placed in the `/etc/nginx/sites-available` and then create a soft link from this file to `/etc/nginx/sites-enabled` and then reload nginx to serve this site instead of just creating them in `sites-enabled`, but this is just a convention so we don't "have" to. If you prefer to do things properly I recommend to do it.
 
+Now we can validate that our HTTP server is capable of being reached by the Letsencrypt challenges. For that is as easy as placing a file to be served in the directory where the challenge will happen (the challenge is an exchange of files):
 
+``` bash
+$ echo "pong" >> /var/www/letsencrypt/.well-known/acme-challenge/ping.txt
 
+$ curl http://mail.oalfonso.com/.well-known/acme-challenge/ping.txt
+pong
+```
 
-## DNS
+This last `pong` after the curl validates that we are exposing the needed dir properly under `mail.oalfonso.com`
+
+So let's request the certificate:
+
+``` bash
+$ certbot certonly \
+    --webroot \
+    -w /var/www/letsencrypt \
+    -d mail.yourdomain.com \
+    --noninteractive \
+    --agree-tos \
+    --email your@email.com
+```
+
+The answer will be something like:
+
+    Saving debug log to /var/log/letsencrypt/letsencrypt.log
+    Requesting a certificate for mail.oalfonso.com
+
+    Successfully received certificate.
+    Certificate is saved at: /etc/letsencrypt/live/mail.oalfonso.com/fullchain.pem
+    Key is saved at:         /etc/letsencrypt/live/mail.oalfonso.com/privkey.pem
+    This certificate expires on 2022-12-12.
+    These files will be updated when the certificate renews.
+    Certbot has set up a scheduled task to automatically renew this certificate in the background.
+
+    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    If you like Certbot, please consider supporting our work by:
+    * Donating to ISRG / Let's Encrypt:   https://letsencrypt.org/donate
+    * Donating to EFF:                    https://eff.org/donate-le
+    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+If you run it again and it's not ready for renewal the answer will be something like:
+
+    Saving debug log to /var/log/letsencrypt/letsencrypt.log
+    Certificate not yet due for renewal
+
+    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    Certificate not yet due for renewal; no action taken.
+    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 ## Security
 
