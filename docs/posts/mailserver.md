@@ -54,7 +54,7 @@ First the client sends an email to its own SMTP server and then the SMTP server 
 
 So if Bob sends an email to `alice@alice.com` this will be the path to follow:
 
-    - [Bob client] -> [Bob Server][SMTP] -> relay -> [Alice Server][SMTP] -> [Alice client]
+    [Bob client] -> [Bob Server][SMTP] -> relay -> [Alice Server][SMTP] -> [Alice client]
 
 Here appears the buzzword `relay` which basically is the same between client->server but between SMTP Servers.
 
@@ -107,7 +107,17 @@ These concepts will be tackled more in deep in their sections, this was just a l
 
 What's Postfix? This is an easy one, an SMTP server.
 
-How to install it? `apt install postfix` and you can ignore all that wizard because we are going to rewrite the config.
+How to install it?
+
+!!! info inline end ""
+
+    v3.4.13 used in this post
+
+```bash linenums="1"
+apt install postfix
+```
+
+and you can ignore all that wizard because we are going to rewrite the config.
 
 What do we want Postfix for? We want to send an email and also to receive it, we need to `relay` and to be `relayed` so we need to configure a couple of things.
 
@@ -128,7 +138,7 @@ For example in my case:
 
 === "main.cf"
 
-    ``` c++
+    ``` c++ linenums="1"
     # ID
     myhostname = mail.{REPLACE_YOURDOMAIN}
     myorigin = /etc/mailname
@@ -178,11 +188,12 @@ For example in my case:
 
 === "master.cf"
 
-    ``` c
+    ``` c linenums="1"
     # ==========================================================================
     # service type  private unpriv  chroot  wakeup  maxproc command + args
     #               (yes)   (yes)   (no)    (never) (100)
     # ==========================================================================
+
     25      inet  n       -       y       -       -       smtpd -v
     587     inet  n       -       -       -       -       smtpd -v
 
@@ -226,6 +237,10 @@ For example in my case:
         flags=FR user=list argv=/usr/lib/mailman/bin/postfix-to-mailman.py
         ${nexthop} ${user}
     ```
+
+!!! info ""
+
+    Remember to replace REPLACE_YOURDOMAIN, REPLACE_YOURDISTRO
 
 Ok now we have a bunch of config lines that we don't know and they don't even work because they are assuming things that we have not yet configured.
 
@@ -312,9 +327,103 @@ graph LR
   AliceClient --> Alice;
 ```
 
-## Dovecot time
+## Dovecot time (v2.3.7.2)
+
+From the official [Dovecot site](https://www.dovecot.org/) we read this:
+
+> Dovecot is among the best performing IMAP servers while still supporting the standard mbox and Maildir formats. The mailboxes are transparently indexed, which gives Dovecot its good performance while still providing full compatibility with existing mailbox handling tools.
+
+The most important for us is that this will be our IMAP and also our auth backend, both Postfix and Dovecot will use Dovecot auth backend.
+
+Let's install it
+
+!!! info inline end ""
+
+    v2.3.7.2 used in this post
+
+```bash linenums="1"
+apt install dovecot
+```
+
+And put these lines in `/etc/dovecot/dovecot.conf`:
+
+``` c linenums="1"
+## MAIL GENERIC
+mail_location = maildir:~/Maildir
+mail_privileged_group = mail
+protocols = " imap"
+
+## AUTH
+disable_plaintext_auth = no
+auth_mechanisms = plain login
+userdb {
+  driver = passwd
+}
+passdb {
+  args = %s
+  driver = pam
+}
+
+## SERVICES: IMAP AND AUTH POSTFIX SOCKET
+service imap-login {
+  inet_listener imap {
+    port = 143
+  }
+}
+service auth {
+  unix_listener /var/spool/postfix/private/auth {
+    mode = 0666
+    user = postfix
+    group = postfix
+  }
+}
+
+## SSL settings
+ssl = required
+ssl_cert = </etc/letsencrypt/live/mail.{REPLACE_YOURDOMAIN}/fullchain.pem
+ssl_key = </etc/letsencrypt/live/mail.{REPLACE_YOURDOMAIN}/privkey.pem
+ssl_dh=</root/dovecot/dh.pem
+ssl_min_protocol = TLSv1.2
+
+## Mailbox definitions
+namespace inbox {
+  inbox = yes
+  mailbox Drafts {
+    special_use = \Drafts
+  }
+  mailbox Junk {
+    special_use = \Junk
+  }
+  mailbox Trash {
+    special_use = \Trash
+  }
+  mailbox Sent {
+    special_use = \Sent
+    auto = subscribe
+  }
+}
+```
+
+!!! info ""
+
+    Remember to replace REPLACE_YOURDOMAIN
+
+We need to generate the dh.pem:
+
+!!! info inline end ""
+
+    This will take few minutes
+
+``` bash linenums="1"
+openssl dhparam 4096 > /root/dovecot/dh.pem
+```
+&nbsp;<br>
+
+This is enough for now, let's move to the [Certificates](#certificates) section which is also needed for [Postfix](#postfix)
 
 ## Certificates
+
+To ensure that our communication between the clients and the server and between our server and other servers is secure we need to add a layer called [TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security) which encrypts our content TODO
 
 ## DNS
 
