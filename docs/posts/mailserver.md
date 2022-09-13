@@ -117,7 +117,6 @@ First of all, postfix has two main config files:
     /etc/postfix/master.cf
 
 The `main.cf` is for the generic config and the `master.cf` is to define the services that Postfix will run.
-And now here raises a question: Which services do we need? Isn't enough with SMTP? Well, yes and no, it's enough with SMTP as protocol but Postfix runs many services.
 
 Before going into details, first, let's copy these config files and replace all `{REPLACE_*}` in `main.cf`, the `master.cf` can be copied as it is:
 
