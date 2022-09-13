@@ -184,17 +184,8 @@ For example in my case:
     # service type  private unpriv  chroot  wakeup  maxproc command + args
     #               (yes)   (yes)   (no)    (never) (100)
     # ==========================================================================
-    smtp      inet  n       -       y       -       -       smtpd -v
-    smtps     inet  n       -       y       -       -       smtpd -v
-    submission inet n       -       -       -       -       smtpd -v
-        -o syslog_name=postfix/submission
-        -o smtpd_tls_wrappermode=no
-        -o smtpd_tls_security_level=encrypt
-        -o smtpd_sasl_auth_enable=yes
-        -o smtpd_recipient_restrictions=permit_mynetworks,permit_sasl_authenticated,reject
-        -o milter_macro_daemon_name=ORIGINATING
-        -o smtpd_sasl_type=dovecot
-        -o smtpd_sasl_path=private/auth
+    25      inet  n       -       y       -       -       smtpd -v
+    587     inet  n       -       -       -       -       smtpd -v
 
     pickup    unix  n       -       y       60      1       pickup
     cleanup   unix  n       -       y       -       0       cleanup
@@ -210,7 +201,6 @@ For example in my case:
     proxywrite unix -       -       n       -       1       proxymap
     smtp      unix  -       -       y       -       -       smtp
     relay     unix  -       -       y       -       -       smtp
-        -o syslog_name=postfix/$service_name
     showq     unix  n       -       y       -       -       showq
     error     unix  -       -       y       -       -       error
     retry     unix  -       -       y       -       -       error
@@ -296,38 +286,32 @@ We will tackle these actions in the next steps.
 
 ### Config file `master.cf`
 
-Contains services like:
+This file contains a list of services that will be run by the `master` process as daemons, they are:
 
     pickup, cleanup, qmgr, tlsmgr, rewrite, bounce, defer, trace, verify, flush, proxymap, proxywrite, smtp, relay, showq, error, retry, discard, local, virtual, lmtp, anvil, scache, postlog, maildrop, uucp, ifmail, bsmtp, scalemail, mailman
 
-What are they doing? I'm not sure, they come preconfigured in the `master.cf` as you can see but we can focus on just 3 services:
+What are they doing? I'm not sure, they come preconfigured in the `master.cf` as you can see and we can try to understand all of them or just focus on the two services that are relevant for our use case and leave the default ones working as Postfix expects.
 
-    smtp, smtps, submission
+The two services that we want are both running the `smtpd` command but the only difference is the port that we are going to expose.
 
-But first, let's see the header of this config file:
+    smtpd over port 25
+    smtpd over port 587
 
-    # ==========================================================================
-    # service type  private unpriv  chroot  wakeup  maxproc command + args
-    #               (yes)   (yes)   (no)    (never) (100)
-    # ==========================================================================
+The 25 has been the historical default SMTP port and the actual port used by SMTP servers to communicate by themselves, so when our SMTP server receives and email from an external SMTP server this communication is done using this port 25. This port accepts non encrypted communication but we are forcing to use TLS.
 
-And the first service, `smtp` goes like this:
+The port 587 is the one used by SMTP servers to receive the mail from our clients and it forces explicitly the usage of TLS.
 
-    smtp      inet  n       -       y       -       -       smtpd -v
+So now understanding this, we can reuse our diagram of Alice and Bob with these services and ports:
 
-Which means bla bla bla
-
-The other is `smtps`:
-
-    x y z
-
-which means other thing
-
-And last, `submission`:
-
-    x w h
-
-Is doing x movidas and look at the `-o`, those override the parameters present in `main.cf`
+``` mermaid
+graph LR
+  Bob --> BobClient;
+  BobClient -->|587| BobSMTPServer;
+  BobSMTPServer -->|25| AliceSMTPServer;
+  AliceSMTPServer --> AliceIMAPServer;
+  AliceIMAPServer -->|143| AliceClient;
+  AliceClient --> Alice;
+```
 
 ## Dovecot time
 
