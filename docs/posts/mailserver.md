@@ -138,104 +138,18 @@ For example in my case:
 
 === "main.cf"
 
-    ``` c++ linenums="1"
-    # ID
-    myhostname = mail.{REPLACE_YOURDOMAIN}
-    myorigin = /etc/mailname
-    mydestination = $myhostname, {REPLACE_YOURDOMAIN}, localhost.localdomain, localhost
-
-    # General
-    syslog_name=postfix/generic
-    smtpd_banner = $myhostname ESMTP $mail_name ({REPLACE_YOURDISTRO})
-    append_dot_mydomain = no
-    compatibility_level = 2
-
-    # Network
-    mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
-    inet_interfaces = {REPLACE_YOURIP},127.0.0.1
-    smtp_bind_address = {REPLACE_YOURIP}
-    inet_protocols = all
-    smtp_address_preference = ipv4
-
-    # TLS
-    smtpd_tls_cert_file=/etc/letsencrypt/live/mail.{REPLACE_YOURDOMAIN}/fullchain.pem
-    smtpd_tls_key_file=/etc/letsencrypt/live/mail.{REPLACE_YOURDOMAIN}/privkey.pem
-    smtpd_tls_security_level = encrypt
-    smtpd_tls_protocols = >=TLSv1.2
-    smtpd_tls_loglevel = 1
-    smtpd_tls_received_header = yes
-    smtpd_tls_auth_only = yes
-    smtp_tls_note_starttls_offer = yes
-    smtp_tls_security_level = encrypt
-
-    # Auth
-    smtpd_sasl_type = dovecot
-    smtpd_sasl_path = private/auth
-    smtpd_sasl_auth_enable=yes
-
-    # Mail config
-    mailbox_size_limit = 0
-    recipient_delimiter = +
-    home_mailbox = Maildir/
-
-    # Milter
-    milter_macro_daemon_name=ORIGINATING
-    milter_default_action = accept
-    smtpd_milters = inet:localhost:12301
-    non_smtpd_milters = inet:localhost:12301
-
+    ``` c++ linenums="1" title="/etc/postfix/main.cf"
+    --8<--
+    posts/mailserver/postfix_main.cf
+    --8<--
     ```
 
 === "master.cf"
 
-    ``` c linenums="1"
-    # ==========================================================================
-    # service type  private unpriv  chroot  wakeup  maxproc command + args
-    #               (yes)   (yes)   (no)    (never) (100)
-    # ==========================================================================
-
-    25      inet  n       -       y       -       -       smtpd -v
-    587     inet  n       -       -       -       -       smtpd -v
-
-    pickup    unix  n       -       y       60      1       pickup
-    cleanup   unix  n       -       y       -       0       cleanup
-    qmgr      unix  n       -       n       300     1       qmgr
-    tlsmgr    unix  -       -       y       1000?   1       tlsmgr
-    rewrite   unix  -       -       y       -       -       trivial-rewrite
-    bounce    unix  -       -       y       -       0       bounce
-    defer     unix  -       -       y       -       0       bounce
-    trace     unix  -       -       y       -       0       bounce
-    verify    unix  -       -       y       -       1       verify
-    flush     unix  n       -       y       1000?   0       flush
-    proxymap  unix  -       -       n       -       -       proxymap
-    proxywrite unix -       -       n       -       1       proxymap
-    smtp      unix  -       -       y       -       -       smtp
-    relay     unix  -       -       y       -       -       smtp
-    showq     unix  n       -       y       -       -       showq
-    error     unix  -       -       y       -       -       error
-    retry     unix  -       -       y       -       -       error
-    discard   unix  -       -       y       -       -       discard
-    local     unix  -       n       n       -       -       local
-    virtual   unix  -       n       n       -       -       virtual
-    lmtp      unix  -       -       y       -       -       lmtp
-    anvil     unix  -       -       y       -       1       anvil
-    scache    unix  -       -       y       -       1       scache
-    postlog   unix-dgram n  -       n       -       1       postlogd
-
-    maildrop  unix  -       n       n       -       -       pipe
-        flags=DRhu user=vmail argv=/usr/bin/maildrop -d ${recipient}
-    uucp      unix  -       n       n       -       -       pipe
-        flags=Fqhu user=uucp argv=uux -r -n -z -a$sender - $nexthop!rmail ($recipient)
-
-    ifmail    unix  -       n       n       -       -       pipe
-        flags=F user=ftn argv=/usr/lib/ifmail/ifmail -r $nexthop ($recipient)
-    bsmtp     unix  -       n       n       -       -       pipe
-        flags=Fq. user=bsmtp argv=/usr/lib/bsmtp/bsmtp -t$nexthop -f$sender $recipient
-    scalemail-backend unix	-	n	n	-	2	pipe
-        flags=R user=scalemail argv=/usr/lib/scalemail/bin/scalemail-store ${nexthop} ${user} ${extension}
-    mailman   unix  -       n       n       -       -       pipe
-        flags=FR user=list argv=/usr/lib/mailman/bin/postfix-to-mailman.py
-        ${nexthop} ${user}
+    ``` c linenums="1" title="/etc/postfix/master.cf"
+    --8<--
+    posts/mailserver/postfix_master.cf
+    --8<--
     ```
 
 !!! info ""
@@ -347,61 +261,10 @@ apt install dovecot
 
 And put these lines in `/etc/dovecot/dovecot.conf`:
 
-``` c linenums="1"
-## MAIL GENERIC
-mail_location = maildir:~/Maildir
-mail_privileged_group = mail
-protocols = " imap"
-
-## AUTH
-disable_plaintext_auth = no
-auth_mechanisms = plain login
-userdb {
-  driver = passwd
-}
-passdb {
-  args = %s
-  driver = pam
-}
-
-## SERVICES: IMAP AND AUTH POSTFIX SOCKET
-service imap-login {
-  inet_listener imap {
-    port = 143
-  }
-}
-service auth {
-  unix_listener /var/spool/postfix/private/auth {
-    mode = 0666
-    user = postfix
-    group = postfix
-  }
-}
-
-## SSL settings
-ssl = required
-ssl_cert = </etc/letsencrypt/live/mail.{REPLACE_YOURDOMAIN}/fullchain.pem
-ssl_key = </etc/letsencrypt/live/mail.{REPLACE_YOURDOMAIN}/privkey.pem
-ssl_dh=</root/dovecot/dh.pem
-ssl_min_protocol = TLSv1.2
-
-## Mailbox definitions
-namespace inbox {
-  inbox = yes
-  mailbox Drafts {
-    special_use = \Drafts
-  }
-  mailbox Junk {
-    special_use = \Junk
-  }
-  mailbox Trash {
-    special_use = \Trash
-  }
-  mailbox Sent {
-    special_use = \Sent
-    auto = subscribe
-  }
-}
+``` c linenums="1" title="/etc/dovecot/dovecot.conf"
+--8<--
+posts/mailserver/dovecot.conf
+--8<--
 ```
 
 !!! info ""

@@ -1,0 +1,45 @@
+
+# ID
+myhostname = mail.{REPLACE_YOURDOMAIN}
+myorigin = /etc/mailname
+mydestination = $myhostname, {REPLACE_YOURDOMAIN}, localhost.localdomain, localhost
+
+# General
+syslog_name=postfix/generic
+smtpd_banner = $myhostname ESMTP $mail_name ({REPLACE_YOURDISTRO})
+append_dot_mydomain = no
+compatibility_level = 2
+
+# Network
+mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
+inet_interfaces = {REPLACE_YOURIP},127.0.0.1
+smtp_bind_address = {REPLACE_YOURIP}
+inet_protocols = all
+smtp_address_preference = ipv4
+
+# TLS
+smtpd_tls_cert_file=/etc/letsencrypt/live/mail.{REPLACE_YOURDOMAIN}/fullchain.pem
+smtpd_tls_key_file=/etc/letsencrypt/live/mail.{REPLACE_YOURDOMAIN}/privkey.pem
+smtpd_tls_security_level = encrypt
+smtpd_tls_protocols = >=TLSv1.2
+smtpd_tls_loglevel = 1
+smtpd_tls_received_header = yes
+smtpd_tls_auth_only = yes
+smtp_tls_note_starttls_offer = yes
+smtp_tls_security_level = encrypt
+
+# Auth
+smtpd_sasl_type = dovecot
+smtpd_sasl_path = private/auth
+smtpd_sasl_auth_enable=yes
+
+# Mail config
+mailbox_size_limit = 0
+recipient_delimiter = +
+home_mailbox = Maildir/
+
+# Milter
+milter_macro_daemon_name=ORIGINATING
+milter_default_action = accept
+smtpd_milters = inet:localhost:12301
+non_smtpd_milters = inet:localhost:12301
