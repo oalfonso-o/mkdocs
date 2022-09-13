@@ -301,10 +301,16 @@ Certbot requests the certificates to Letsencrypt using different challenges, one
 
 So let's start, first we need to install Certbot and NGINX
 
+!!! info inline end ""
+
+    certbot v1.30.0 used in this post
+    nginx v1.18.0 used in this post
+
 ``` bash linenums="1"
 apt install certbot
 apt install nginx
 ```
+&nbsp;<br>
 !!! info ""
 
     We need our nginx service running, we can check it with `systemctl status nginx` and in case it's not running we can start it with `systemctl start nginx`
