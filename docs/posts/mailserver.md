@@ -362,16 +362,17 @@ $ apt install nginx
 
 Let's create an nginx site that will be the one use to solve the challenges by Letsencrypt and validate that we are the owners of the domain name so we can get valid and trusted TLS certificates for our domain name and nobody else can:
 
-``` nginx title="/etc/nginx/snippets/letsencrypt.conf"
+``` c linenums="1" title="/etc/nginx/snippets/letsencrypt.conf"
 --8<--
 posts/mailserver/letsencrypt.conf
 --8<--
 ```
-``` nginx title="/etc/nginx/sites-enabled/mail.mydomain.com"
+``` c linenums="1" title="/etc/nginx/sites-enabled/mail.mydomain.com"
 --8<--
 posts/mailserver/nginx_site
 --8<--
 ```
+
 !!! info ""
 
     Ideally NGINX sites should be placed in the `/etc/nginx/sites-available` and then create a soft link from this file to `/etc/nginx/sites-enabled` and then reload nginx to serve this site instead of just creating them in `sites-enabled`, but this is just a convention so we don't "have" to. If you prefer to do things properly I recommend to do it.
@@ -400,35 +401,36 @@ $ certbot certonly \
 ```
 
 The answer will be something like:
+```
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+Requesting a certificate for mail.oalfonso.com
 
-    Saving debug log to /var/log/letsencrypt/letsencrypt.log
-    Requesting a certificate for mail.oalfonso.com
+Successfully received certificate.
+Certificate is saved at: /etc/letsencrypt/live/mail.oalfonso.com/fullchain.pem
+Key is saved at:         /etc/letsencrypt/live/mail.oalfonso.com/privkey.pem
+This certificate expires on 2022-12-12.
+These files will be updated when the certificate renews.
+Certbot has set up a scheduled task to automatically renew this certificate in the background.
 
-    Successfully received certificate.
-    Certificate is saved at: /etc/letsencrypt/live/mail.oalfonso.com/fullchain.pem
-    Key is saved at:         /etc/letsencrypt/live/mail.oalfonso.com/privkey.pem
-    This certificate expires on 2022-12-12.
-    These files will be updated when the certificate renews.
-    Certbot has set up a scheduled task to automatically renew this certificate in the background.
-
-    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    If you like Certbot, please consider supporting our work by:
-    * Donating to ISRG / Let's Encrypt:   https://letsencrypt.org/donate
-    * Donating to EFF:                    https://eff.org/donate-le
-    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+If you like Certbot, please consider supporting our work by:
+* Donating to ISRG / Let's Encrypt:   https://letsencrypt.org/donate
+* Donating to EFF:                    https://eff.org/donate-le
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+```
 
 If you run it again and it's not ready for renewal the answer will be something like:
+```
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+Certificate not yet due for renewal
 
-    Saving debug log to /var/log/letsencrypt/letsencrypt.log
-    Certificate not yet due for renewal
-
-    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    Certificate not yet due for renewal; no action taken.
-    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Certificate not yet due for renewal; no action taken.
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+```
 
 ## Security
 
 - SPF
 - DKIM
 - DMARC
-
