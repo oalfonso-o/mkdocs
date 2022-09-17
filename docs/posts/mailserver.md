@@ -434,8 +434,28 @@ Now we have our certs in:
     Certificate is saved at: /etc/letsencrypt/live/mail.oalfonso.com/fullchain.pem
     Key is saved at:         /etc/letsencrypt/live/mail.oalfonso.com/privkey.pem
 
+This step will cover the config lines of Postfix and Dovecot referring to TLS.
+
 ## Security
 
-- SPF
-- DKIM
-- DMARC
+First of all, let's see how we can see the original content of an email in Gmail so we can always send an email from our mail server to a Gmail account and check few things:
+
+- if the email arrives the Gmail account
+- if the email is flagged automatically as spam or not
+- if the email passes the SPF
+- if emaill passes the DKIM
+- if emaill passes the DMARC
+
+We will understand better what is SPF, DKIM and DMARC later.
+
+## How to check the Originl Content of an email in Gmail
+
+At the time of writing, when you open an email in Gmail, at the right we can see 3 dots like this:
+
+![Image title](images/original_content_three_dots.png)
+![Image title](images/original_content_option.png)
+
+Once we open the original content of the email we want to check 4 things, if the SPF, DKIM and DMARC are flagged as "PASS" and if the TLS is used:
+
+![Image title](images/original_content_pass.png)
+![Image title](images/original_content_tls.png)

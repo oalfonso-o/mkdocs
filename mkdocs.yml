@@ -72,8 +72,6 @@ markdown_extensions:
   - pymdownx.snippets:
       base_path: "docs/"
       check_paths: true
-      auto_append:
-        - posts/mailserver/letsencrypt.conf
   - pymdownx.tabbed:
       alternate_style: true
   - pymdownx.superfences:
@@ -98,3 +96,5 @@ extra:
       name: Pied Piper oalfonso_o profile
 extra_css:
   - stylesheets/extra.css
+plugins:
+  - glightbox
