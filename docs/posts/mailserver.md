@@ -360,7 +360,7 @@ $ apt install nginx
 
     We need our nginx service running, we can check it with `systemctl status nginx` and in case it's not running we can start it with `systemctl start nginx`
 
-Let's create an nginx site that will be the one use to solve the challenges by Letsencrypt and validate that we are the owners of the domain name so we can get valid and trusted TLS certificates for our domain name and nobody else can:
+Let's create an nginx site that will be the one used to solve the challenges by Letsencrypt and validate that we are the owners of the domain name so we can get valid and trusted TLS certificates for our domain name and nobody else can:
 
 ``` c linenums="1" title="/etc/nginx/snippets/letsencrypt.conf"
 --8<--
@@ -428,6 +428,11 @@ Certificate not yet due for renewal
 Certificate not yet due for renewal; no action taken.
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ```
+
+Now we have our certs in:
+
+    Certificate is saved at: /etc/letsencrypt/live/mail.oalfonso.com/fullchain.pem
+    Key is saved at:         /etc/letsencrypt/live/mail.oalfonso.com/privkey.pem
 
 ## Security
 
