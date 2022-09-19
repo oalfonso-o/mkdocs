@@ -448,14 +448,67 @@ First of all, let's see how we can see the original content of an email in Gmail
 
 We will understand better what is SPF, DKIM and DMARC later.
 
-## How to check the Originl Content of an email in Gmail
+### How to check the Originl Content of an email in Gmail
 
 At the time of writing, when you open an email in Gmail, at the right we can see 3 dots like this:
 
 ![Image title](images/original_content_three_dots.png)
+
+Once you click on them, a dropdown opens and you can click on "Show original":
+
 ![Image title](images/original_content_option.png)
 
-Once we open the original content of the email we want to check 4 things, if the SPF, DKIM and DMARC are flagged as "PASS" and if the TLS is used:
+Once we open the original content of the email we want to check 4 things, if the TLS is used and if the SPF, DKIM and DMARC are flagged as "PASS":
 
-![Image title](images/original_content_pass.png)
 ![Image title](images/original_content_tls.png)
+![Image title](images/original_content_pass.png)
+
+Now we should see TLS used but the SPF, DKIM and DMARC shouldn't pass, so or the email has not arrived or has arrived to the spam folder.
+
+Our goal to be trustful is to have all these three with the "PASS" flag. Let's understand each one.
+
+### SPF: Sender Policy Framework
+
+An SPF record is a DNS record of type TXT which declares the address of the real mail server. This record is used to detect when a third party is trying to impersonate your address from another IP.
+
+For more detail, let's see the description from Wikipedia:
+
+> Sender Policy Framework (SPF) is an email authentication method designed to detect forging sender addresses during the delivery of the email. SPF alone, though, is limited to detecting a forged sender claim in the envelope of the email, which is used when the mail gets bounced. Only in combination with DMARC can it be used to detect the forging of the visible sender in emails (email spoofing), a technique often used in phishing and email spam.
+
+The server which will receive your email from your SMTP server will use your domain name to do a request to that domain and search for the SPF record, if the address of that SPF record matches the address of the sender then Gmaill will flag your email with the "PASS" for the SPF.
+
+The only thing to do is adding a DNS record like this:
+
+```
+    host name:  yourdomain.com
+    type:       TXT
+    data:       "v=spf1 ip4:{REPLACE_YOURIP}/32 -all"
+```
+
+### DKIM: DomainKeys Identified Mail
+
+DKIM is an email authentication based on a pair of keys, one public and one private. The idea is to sign every email with the private key and then publish the public key in a DNS DKIM record (type TXT, like SPF) so the receiver can verify if the signed email matches the public key, if not, then this email has been spoofed.
+
+To sign our emails we configure postfix to use OpenDKIM, which we have to install.
+
+#### Installing OpenDKIM
+
+Let's start:
+
+``` bash
+$ apt install opendkim opendkim-tools
+```
+
+Now configure the config file:
+
+``` c linenums="1" title="/etc/opendkim.conf"
+--8<--
+posts/mailserver/opendkim.conf
+--8<--
+```
+
+Now let's create a directory structure that will hold the trusted hosts, key tables, signing tables and crypto keys:
+
+``` bash
+mkdir -p /etc/opendkim/keys
+```
