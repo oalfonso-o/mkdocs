@@ -225,7 +225,7 @@ The two services that we want are both running the `smtpd` command but the only 
     smtpd over port 25
     smtpd over port 587
 
-The 25 has been the historical default SMTP port and the actual port used by SMTP servers to communicate by themselves, so when our SMTP server receives and email from an external SMTP server this communication is done using this port 25. This port accepts non encrypted communication but we are forcing to use TLS.
+The 25 has been the historical default SMTP port and the actual port used by SMTP servers to communicate between themselves, so when our SMTP server receives and email from an external SMTP server this communication is done using this port 25. This port accepts non encrypted communication but we are forcing to use TLS.
 
 The port 587 is the one used by SMTP servers to receive the mail from our clients and it forces explicitly the usage of TLS.
 
@@ -280,6 +280,7 @@ We need to generate the dh.pem:
 ``` bash linenums="1"
 openssl dhparam 4096 > /root/dovecot/dh.pem
 ```
+To understand better what is DH check the [Wikipedia page](https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange)
 &nbsp;<br>
 
 This is enough for now, let's move to the [DNS](#dns) and [Certificates](#certificates) section which is also needed for [Postfix](#postfix)
@@ -294,13 +295,13 @@ For example, with [Google Domains](https://domains.google/) you have the [regist
 
 Depending on the domain provider and the DNS zones management provider the configuration will be one or other but the concept is the same, we will need to define a couple of records:
 
-Imagine that our domain is `oalfonso.com` and the IP is 1.2.3.4, the records will be:
+Imagine that our domain is `yourdomain.com` and the IP is 1.2.3.4, the records will be:
 
 | Hostname            | Type  | Data                 |
 | ------------------- | ----- |--------------------- |
-| `oalfonso.com`      | A     | 1.2.3.4              |
-| `mail.oalfonso.com` | A     | 1.2.3.4              |
-| `oalfonso.com`      | MX    | 0 mail.oalfonso.com. |
+| `yourdomain.com`      | A     | 1.2.3.4              |
+| `mail.yourdomain.com` | A     | 1.2.3.4              |
+| `yourdomain.com`      | MX    | 0 mail.yourdomain.com. |
 
 The important part here is this, extracted from [Wikipedia MX Record page](https://en.wikipedia.org/wiki/MX_record):
 
@@ -308,21 +309,21 @@ The important part here is this, extracted from [Wikipedia MX Record page](https
 
 So we need:
 
-- The main A record pointing our oalfonso.com to our IP
-- The main A record of our mail DNS zone mail.oalfonso.com pointing to our IP too
-- The main MX record of our oalfonso.com which is the one that will be after the `@` and the one used by other SMTP servers to get the mail server `mail.oalfonso.com` from this MX record. Once they have the `mail.oalfonso.com` address they can get the IP with the A record.
+- The main A record pointing yourdomain.com to our IP
+- The main A record of our mail DNS zone mail.yourdomain.com pointing to our IP too
+- The main MX record of our yourdomain.com which is the one that will be after the `@` and the one used by other SMTP servers to get the mail server `mail.yourdomain.com` from this MX record. Once they have the `mail.yourdomain.com` address they can get the IP with the A record.
 
 Now we have to wait until the public DNS servers replicate our records. We can use `dig` to validate that the public DNS that we are using from our host has these records replicated, if we don't see them it can be because it's taking long to replicate or because we did something wrong:
 
 ``` bash
-$ dig +noall +answer +multiline oalfonso.com a
-oalfonso.com.		57 IN A	1.2.3.4
+$ dig +noall +answer +multiline yourdomain.com a
+yourdomain.com.		57 IN A	1.2.3.4
 
-$ dig +noall +answer +multiline mail.oalfonso.com a
-mail.oalfonso.com.	1927 IN	A 1.2.3.4
+$ dig +noall +answer +multiline mail.yourdomain.com a
+mail.yourdomain.com.	1927 IN	A 1.2.3.4
 
-$ dig +noall +answer +multiline oalfonso.com mx
-oalfonso.com.		3224 IN	MX 0 mail.oalfonso.com.
+$ dig +noall +answer +multiline yourdomain.com mx
+yourdomain.com.		3224 IN	MX 0 mail.yourdomain.com.
 ```
 
 With this we can request our certificates, let's move to [Certificates](#certificates) section.
@@ -382,11 +383,11 @@ Now we can validate that our HTTP server is capable of being reached by the Lets
 ``` bash
 $ echo "pong" >> /var/www/letsencrypt/.well-known/acme-challenge/ping.txt
 
-$ curl http://mail.oalfonso.com/.well-known/acme-challenge/ping.txt
+$ curl http://mail.yourdomain.com/.well-known/acme-challenge/ping.txt
 pong
 ```
 
-This last `pong` after the curl validates that we are exposing the needed dir properly under `mail.oalfonso.com`
+This last `pong` after the curl validates that we are exposing the needed dir properly under `mail.yourdomain.com`
 
 So let's request the certificate:
 
@@ -403,11 +404,11 @@ $ certbot certonly \
 The answer will be something like:
 ```
 Saving debug log to /var/log/letsencrypt/letsencrypt.log
-Requesting a certificate for mail.oalfonso.com
+Requesting a certificate for mail.yourdomain.com
 
 Successfully received certificate.
-Certificate is saved at: /etc/letsencrypt/live/mail.oalfonso.com/fullchain.pem
-Key is saved at:         /etc/letsencrypt/live/mail.oalfonso.com/privkey.pem
+Certificate is saved at: /etc/letsencrypt/live/mail.yourdomain.com/fullchain.pem
+Key is saved at:         /etc/letsencrypt/live/mail.yourdomain.com/privkey.pem
 This certificate expires on 2022-12-12.
 These files will be updated when the certificate renews.
 Certbot has set up a scheduled task to automatically renew this certificate in the background.
@@ -431,8 +432,8 @@ Certificate not yet due for renewal; no action taken.
 
 Now we have our certs in:
 
-    Certificate is saved at: /etc/letsencrypt/live/mail.oalfonso.com/fullchain.pem
-    Key is saved at:         /etc/letsencrypt/live/mail.oalfonso.com/privkey.pem
+    Certificate is saved at: /etc/letsencrypt/live/mail.yourdomain.com/fullchain.pem
+    Key is saved at:         /etc/letsencrypt/live/mail.yourdomain.com/privkey.pem
 
 This step will cover the config lines of Postfix and Dovecot referring to TLS.
 
@@ -492,8 +493,8 @@ The only thing to do is adding a DNS record like this:
 Wait until the record is replicated, check it with:
 
 ```
-$ dig +noall +answer +multiline oalfonso.com txt
-oalfonso.com.		3600 IN	TXT "v=spf1 ip4:78.47.100.194/32 -all"
+$ dig +noall +answer +multiline yourdomain.com txt
+yourdomain.com.		3600 IN	TXT "v=spf1 ip4:1.2.3.4/32 -all"
 ```
 When the response of the `dig` shows your SPF record then we are done
 
@@ -575,8 +576,8 @@ We copy everything between the parenthesis and we are ready to create our DKIM r
 Now restart Postfix and OpenDKIM, wait until the DNS record is replaced. Check it with:
 
 ``` bash
-$ dig +noall +answer +multiline mail._domainkey.oalfonso.com txt
-mail._domainkey.oalfonso.com. 3600 IN TXT "v=DKIM1; h=sha256; k=rsa; " "p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAy+KHNcYaCf4RN2yLNPkJB+1h8OaLQywOZ+R+PlC4w0N5QBRwX4R14mTx3uEbWCEI3dqwaI6nxVv7xImeTMEmYSrOUgcsCVLKirxLeQm5N6mjdwoS8zLA5I0Y2bpJTVE7RDZ75ZuqGrI1dpQlOiNAAocbBQnj2ThfS9zh8riNN+t8/yAwq58JDVjb9pe3VvxZb3iYFgY2IDFPJ7" "9vVmh0mfcR7xsiR+i/ig/noLBLZErayNOoG0YR4plI9fNbvKY7sMUnVTOLi5I6TOy9xOVjV6wZa29QPXqyFOBhlOoEJ+PVtfK8yRgqNc8nxOndK1EUt0/gvw9wP3qsKe7DZifjvwIDAQAB"
+$ dig +noall +answer +multiline mail._domainkey.yourdomain.com txt
+mail._domainkey.yourdomain.com. 3600 IN TXT "v=DKIM1; h=sha256; k=rsa; " "p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAy+KHNcYaCf4RN2yLNPkJB+1h8OaLQywOZ+R+PlC4w0N5QBRwX4R14mTx3uEbWCEI3dqwaI6nxVv7xImeTMEmYSrOUgcsCVLKirxLeQm5N6mjdwoS8zLA5I0Y2bpJTVE7RDZ75ZuqGrI1dpQlOiNAAocbBQnj2ThfS9zh8riNN+t8/yAwq58JDVjb9pe3VvxZb3iYFgY2IDFPJ7" "9vVmh0mfcR7xsiR+i/ig/noLBLZErayNOoG0YR4plI9fNbvKY7sMUnVTOLi5I6TOy9xOVjV6wZa29QPXqyFOBhlOoEJ+PVtfK8yRgqNc8nxOndK1EUt0/gvw9wP3qsKe7DZifjvwIDAQAB"
 ```
 
 Once you can see your DKIM record then we can test our DKIM sending and email to Gmail and checking the original content and verify if now Gmail flags our email as PASS with DKIM.
@@ -598,7 +599,7 @@ You only have to create a DNS record:
 Check it with:
 
 ``` bash
-$ dig +short _dmarc.oalfonso.com txt
+$ dig +short _dmarc.yourdomain.com txt
 "v=DMARC1;p=reject;"
 ```
 
