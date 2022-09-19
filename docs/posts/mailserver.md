@@ -11,13 +11,14 @@ This post will go through:
 - the security (encryption)
 - the DNS management: focus on being trustful (a.k.a not being seen as spam)
 
-## TL;DR *"I just want to copypaste the config and have a mail server now"*
 
-Well, sadly there's no valid TL;DR here :(
+!!! info "**TL;DR *"I just want to copypaste the config and have a mail server now"***"
 
-Setting up a mail server requires time. This is a long post that has to be tackled with patience.
+    Well, sadly there's no valid TL;DR here :(
 
-If you don't have enough time then [this](https://workspace.google.com/business/signup/welcome) is your best choice (and normally it's always the best choice)
+    Setting up a mail server requires time. This is a long post that has to be tackled with patience.
+
+    If you don't have enough time then [this](https://workspace.google.com/business/signup/welcome) is your best choice (and normally it's always the best choice)
 
 ## Requirements
 
@@ -113,8 +114,8 @@ How to install it?
 
     v3.4.13 used in this post
 
-```bash linenums="1"
-apt install postfix
+```bash
+$ apt install postfix
 ```
 
 and you can ignore all that wizard because we are going to rewrite the config.
@@ -222,8 +223,8 @@ What are they doing? I'm not sure, they come preconfigured in the `master.cf` as
 
 The two services that we want are both running the `smtpd` command but the only difference is the port that we are going to expose.
 
-    smtpd over port 25
-    smtpd over port 587
+- smtpd over port 25
+- smtpd over port 587
 
 The 25 has been the historical default SMTP port and the actual port used by SMTP servers to communicate between themselves, so when our SMTP server receives and email from an external SMTP server this communication is done using this port 25. This port accepts non encrypted communication but we are forcing to use TLS.
 
@@ -241,7 +242,7 @@ graph LR
   AliceClient --> Alice;
 ```
 
-## Dovecot time (v2.3.7.2)
+## Dovecot (v2.3.7.2)
 
 From the official [Dovecot site](https://www.dovecot.org/) we read this:
 
@@ -255,8 +256,8 @@ Let's install it
 
     v2.3.7.2 used in this post
 
-```bash linenums="1"
-apt install dovecot
+```bash
+$ apt install dovecot
 ```
 
 And put these lines in `/etc/dovecot/dovecot.conf`:
@@ -277,8 +278,8 @@ We need to generate the dh.pem:
 
     This will take few minutes
 
-``` bash linenums="1"
-openssl dhparam 4096 > /root/dovecot/dh.pem
+``` bash
+$ openssl dhparam 4096 > /root/dovecot/dh.pem
 ```
 To understand better what is DH check the [Wikipedia page](https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange)
 &nbsp;<br>
@@ -350,7 +351,7 @@ So let's start, first we need to install Certbot and NGINX
     certbot v1.30.0 used in this post
     nginx v1.18.0 used in this post
 
-``` bash linenums="1"
+``` bash
 $ add-apt-repository ppa:certbot/certbot
 $ apt update
 $ apt install certbot
@@ -437,9 +438,16 @@ Now we have our certs in:
 
 This step will cover the config lines of Postfix and Dovecot referring to TLS.
 
-## Mail clients
+## Users and Clients
 
-Now you can configure Thunderbird or any mobile mail client, is as easy as following the wizard of the client and put the configuration of the SMTP and IMAP servers that we have configured and we will be ready to send and receive emails, but maybe our emails will still be blocked by some receiver email servers like Gmail or flagging them as spam. To improve this, let's move to the next chapter [Being Trustful](#being-trustful)
+As we have configured the auth with Dovecot and Dovecot is configured to use the users from the system, if we want a new email account we just need to create a user with a home and password:
+
+``` bash
+$ useradd youruser -m
+$ passwd youruser
+```
+
+Now you can configure Linux clients like [Thunderbird](https://www.thunderbird.ne) or any mobile mail client like [Blue Mail](https://play.google.com/store/apps/details?id=me.bluemail.mail). Is as easy as following the wizard of the client and put the configuration of the SMTP and IMAP servers that we have configured plus the user and password that we have created and we will be ready to send and receive emails, but maybe our emails will still be blocked (or flagged as spam) by some receiver email servers like Gmail. To improve this, let's move to the next chapter [Being Trustful](#being-trustful)
 
 ## Being Trustful
 
@@ -448,12 +456,12 @@ First of all, let's see how we can see the original content of an email in Gmail
 - if the email arrives the Gmail account
 - if the email is flagged automatically as spam or not
 - if the email passes the SPF
-- if emaill passes the DKIM
-- if emaill passes the DMARC
+- if email passes the DKIM
+- if email passes the DMARC
 
 We will understand better what is SPF, DKIM and DMARC later.
 
-### How to check the Originl Content of an email in Gmail
+### Show Original in Gmail
 
 At the time of writing, when you open an email in Gmail, at the right we can see 3 dots like this:
 
@@ -472,9 +480,9 @@ Now we should see TLS used but the SPF, DKIM and DMARC shouldn't pass, so or the
 
 Our goal to be trustful is to have all these three with the "PASS" flag. Let's understand each one.
 
-### SPF: Sender Policy Framework
+### SPF
 
-An SPF record is a DNS record of type TXT which declares the address of the real mail server. This record is used to detect when a third party is trying to impersonate your address from another IP.
+[SPF](https://es.wikipedia.org/wiki/Sender_Policy_Framework) stands for Sender Policy Framework. An SPF record is a DNS record of type TXT which declares the address of the real mail server. This record is used to detect when a third party is trying to impersonate your address from another IP.
 
 For more detail, let's see the description from Wikipedia:
 
@@ -484,11 +492,9 @@ The server which will receive your email from your SMTP server will use your dom
 
 The only thing to do is adding a DNS record like this:
 
-```
-    host name:  yourdomain.com
-    type:       TXT
-    data:       "v=spf1 ip4:{REPLACE_YOURIP}/32 -all"
-```
+| Hostname             | Type  | Data                                  |
+| -------------------- | ----- |-------------------------------------- |
+| {REPLACE_YOURDOMAIN} | TXT   | "v=spf1 ip4:{REPLACE_YOURIP}/32 -all" |
 
 Wait until the record is replicated, check it with:
 
@@ -496,17 +502,21 @@ Wait until the record is replicated, check it with:
 $ dig +noall +answer +multiline yourdomain.com txt
 yourdomain.com.		3600 IN	TXT "v=spf1 ip4:1.2.3.4/32 -all"
 ```
-When the response of the `dig` shows your SPF record then we are done
+When the response of the `dig` shows your SPF record then we are done and we can check it sending an email to a Gmail account, go to Show original and check if Gmail flags our SPF as PASS.
 
-### DKIM: DomainKeys Identified Mail
+### DKIM
 
-DKIM is an email authentication based on a pair of keys, one public and one private. The idea is to sign every email with the private key and then publish the public key in a DNS DKIM record (type TXT, like SPF) so the receiver can verify if the signed email matches the public key, if not, then this email has been spoofed.
+[DKIM](https://es.wikipedia.org/wiki/DomainKeys_Identified_Mail) means DomainKeys Identified Mail and is an email authentication based on a pair of keys, one public and one private. The idea is to sign every email with the private key and then publish the public key in a DNS DKIM record (type TXT, like SPF) so the receiver can verify if the signed email matches the public key, if not, then this email has been spoofed.
 
 To sign our emails we configure Postfix to use OpenDKIM and this software will be the responsible of this action.
 
-#### Installing OpenDKIM
+#### Installing OpenDKIM (v2.11.0)
 
 Let's start:
+
+!!! info inline end ""
+
+    v2.11.0 used in this post
 
 ``` bash
 $ apt install opendkim opendkim-tools
@@ -553,10 +563,10 @@ mail._domainkey.{REPLACE_YOURDOMAIN} {REPLACE_YOURDOMAIN}:mail:/etc/opendkim/key
 This private key is not created yet, let's create it:
 
 ``` bash
-cd /etc/opendkim/keys
-mkdir {REPLACE_YOURDOMAIN}
-opendkim-genkey -s mail -d {REPLACE_YOURDOMAIN}
-chown opendkim:opendkim mail.private
+$ cd /etc/opendkim/keys
+$ mkdir {REPLACE_YOURDOMAIN}
+$ opendkim-genkey -s mail -d {REPLACE_YOURDOMAIN}
+$ chown opendkim:opendkim mail.private
 ```
 
 Now in the directory with the name of your domain now there will appear two files, the key and the DNS TXT record data. In the `mail.txt` file we will see something like this:
@@ -567,11 +577,9 @@ Now in the directory with the name of your domain now there will appear two file
 
 We copy everything between the parenthesis and we are ready to create our DKIM record, from the v=DKIM1 until the whole pub key, respecting the `"` and spaces:
 
-```
-    host name:  mail._domainkey.{REPLACE_YOURDOMAIN}
-    type:       TXT
-    data:       "{REPLACE_YOURDKIMDATA}"
-```
+| Hostname                             | Type  | Data                   |
+| ------------------------------------ | ----- |----------------------- |
+| mail._domainkey.{REPLACE_YOURDOMAIN} | TXT   | {REPLACE_YOURDKIMDATA} |
 
 Now restart Postfix and OpenDKIM, wait until the DNS record is replaced. Check it with:
 
@@ -582,35 +590,35 @@ mail._domainkey.yourdomain.com. 3600 IN TXT "v=DKIM1; h=sha256; k=rsa; " "p=MIIB
 
 Once you can see your DKIM record then we can test our DKIM sending and email to Gmail and checking the original content and verify if now Gmail flags our email as PASS with DKIM.
 
-### DMARC: Domain-based Message Authentication, Reporting & Conformance
+### DMARC
 
-In simple, it's a layer of email authentication on top of SPF and DKIM, if SPF and DKIM are properly configured and we add a DNS record for DMARC Gmail will give us our PASS to DMARC. If we want a better description we can check the official page description:
+[DMARC](https://en.wikipedia.org/wiki/DMARC) means Domain-based Message Authentication, Reporting & Conformance. In simple, it's a layer of email authentication on top of SPF and DKIM, if SPF and DKIM are properly configured and we add a DNS record for DMARC Gmail will give us our PASS to DMARC. If we want a better description we can check the official page description:
 
 > DMARC, which stands for “Domain-based Message Authentication, Reporting & Conformance”, is an email authentication, policy, and reporting protocol. It builds on the widely deployed SPF and DKIM protocols, adding linkage to the author (“From:”) domain name, published policies for recipient handling of authentication failures, and reporting from receivers to senders, to improve and monitor protection of the domain from fraudulent email.
 
 You only have to create a DNS record:
 
-```
-    host name:  _dmarc.{REPLACE_YOURDOMAIN}
-    type:       TXT
-    data:       "v=DMARC1;p=reject;"
-```
+| Hostname                    | Type  | Data                 |
+| --------------------------- | ----- |--------------------- |
+| _dmarc.{REPLACE_YOURDOMAIN} | TXT   | "v=DMARC1;p=reject;" |
 
 Check it with:
 
 ``` bash
-$ dig +short _dmarc.yourdomain.com txt
-"v=DMARC1;p=reject;"
+$ dig +noall +answer +multiline _dmarc.yourdomain.com txt
+_dmarc.yourdomain.com.	3600 IN	TXT "v=DMARC1;p=reject;"
 ```
 
 If `dig` responds with the data of your DNS record then we are ready.
 
 
-## Check the trustiness of your server
+## Validate trustiness
 
 There are multiple ways, you can search for online sites but my preferred ones are:
 
 1. Gmail: check original content as we've already seen.
-2. Mail Tester: [https://www.mail-tester.com](https://www.mail-tester.com) this gives more details
+2. Mail Tester: [https://www.mail-tester.com](https://www.mail-tester.com) this gives more details.
 If you have everything properly setup you should see an score of 10/10
 ![Mail Tester](images/mail_tester.png)
+
+And that's all, you can enjoy your new mail server :)
