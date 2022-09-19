@@ -1,7 +1,7 @@
 # Mail Server with Postfix and Dovecot
 
 This post explains how to setup a [Postfix](https://www.postfix.org/) [SMTP](https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol) server and a [Dovecot](https://www.dovecot.org/) [IMAP](https://en.wikipedia.org/wiki/Internet_Message_Access_Protocol) server for personal use.
-For entreprise I recommend selecting a trusted vendor.
+For enterprise I recommend selecting a trusted vendor.
 
 This post will go through:
 
@@ -69,7 +69,7 @@ So the whole traveling would be something like this:
     - authenticates `[Bob client]` (if no auth, no email)
     - relays the email to `[Alice Server][SMTP]` (it has to find the IP based on the `@alice.com`)
 3. `[Alice Server][SMTP]`:
-    - validates the email comming from `[Bob server][SMTP]`
+    - validates the email coming from `[Bob server][SMTP]`
     - sends the email to `[Alice Server][IMAP]`
 4. `[Alice client]`:
     - requests new email to `[Alice Server][IMAP]`
@@ -83,13 +83,13 @@ So:
 
     [client] -> [SMTP] -> relay -> [SMTP] -> [IMAP] -> [client]
 
-Now we know the travelling but why we add an IMAP there? Why not just querying from the client directly to the SMTP?
+Now we know the traveling but why we add an IMAP there? Why not just querying from the client directly to the SMTP?
 Ok, that's a good one. Maybe it's because somebody decided to implement it like this with this protocol, but the concept is:
 
 - SMTP sends and receives, but it doesn't care about storing
 - IMAP does, he worries about storing
 
-So SMTP for the travelling between mail servers and IMAP to manage all the received emails.
+So SMTP for the traveling between mail servers and IMAP to manage all the received emails.
 
 POP3 is like IMAP but older and with less features.
 
@@ -134,7 +134,7 @@ For example in my case:
 
     myhostname = mail.{REPLACE_YOURDOMAIN}
     # replace with
-    myhostname = mail.oalfonso.com
+    myhostname = mail.{REPLACE_YOURDOMAIN}
 
 === "main.cf"
 
@@ -169,14 +169,14 @@ Brief description of each parameter:
     - [myorigin](https://www.postfix.org/postconf.5.html#myorigin): The contents of `/etc/mailname` should contain a valid hostname for your mail server. This is used by applications like cron, we can put the same as $myhostname in `/etc/mailname`.
     - [mydestination](https://www.postfix.org/postconf.5.html#mydestination): This parameter specifies the domains from which we will accept emails to be sent. So if you send a request from a `bob@mail.com` and `mail.com` is not in this list, `bob` will have to find another way to send his email.
 - General:
-    - [syslog_name](https://www.postfix.org/postconf.5.html#syslog_name): name of the logger in syslog to identify the logs. This can be overriden in each service in `master.cf`
+    - [syslog_name](https://www.postfix.org/postconf.5.html#syslog_name): name of the logger in syslog to identify the logs. This can be overridden in each service in `master.cf`
     - [smtpd_banner](https://www.postfix.org/postconf.5.html#smtpd_banner): Message returned by the server to present himself, it's a convention and if is not respected some servers (like Gmail) can tag you as spam.
     - [append_dot_mydomain](https://www.postfix.org/postconf.5.html#append_dot_mydomain): prevents sending emails to things like "user@partialdomainname" because the `.com` won't be automatically added. We prefer to don't modify the domains.
     - [compatibility_level](https://www.postfix.org/postconf.5.html#compatibility_level): To not go into too many details, less than 2 can accept backwards compatibility but as we are installing this version from scratch we can set all the configuration parameters without backwards compatibility.
 - Network
     - [mynetworks](https://www.postfix.org/postconf.5.html#mynetworks): The list of "trusted" remote SMTP clients that are allowed to relay mail through Postfix.
     - [inet_interfaces](https://www.postfix.org/postconf.5.html#inet_interfaces): The local network interface addresses that this mail system receives mail on
-    - [smtp_bind_address](https://www.postfix.org/postconf.5.html#smtp_bind_address): IP used to send emails. Needed if we have multiple interfaces, and more important if they are public interfaces, because we will setup DNS records to give us more truthworthship that will declare our public IP as the source of the server and it has to match to the IP used by Postfix, if not other SMTP servers can decide to don't trust us.
+    - [smtp_bind_address](https://www.postfix.org/postconf.5.html#smtp_bind_address): IP used to send emails. Needed if we have multiple interfaces, and more important if they are public interfaces, because we will setup DNS records to be more trustful that will declare our public IP as the source of the server and it has to match to the IP used by Postfix, if not other SMTP servers can decide to don't trust us.
     - [inet_protocols](https://www.postfix.org/postconf.5.html#inet_protocols): The Internet protocols Postfix will attempt to use when making or accepting connections, options: ipv4, ipv6 or all which are both.
     - [smtp_address_preference](https://www.postfix.org/postconf.5.html#smtp_address_preference): Try to use this protocol before the other, if ipv4 specified Postfix will use ipv4 always as the first option.
 - TLS
@@ -191,7 +191,7 @@ Brief description of each parameter:
     - [smtp_tls_security_level](https://www.postfix.org/postconf.5.html#smtp_tls_security_level): Use `encrypt` to force the SMTP client to use TLS.
 - Auth
     - [smtpd_sasl_type](https://www.postfix.org/postconf.5.html#smtpd_sasl_type): As [SASL](https://en.wikipedia.org/wiki/Simple_Authentication_and_Security_Layer){target=_blank} type we will specify `dovecot` to use the auth system of our IMAP server.
-    - [smtpd_sasl_path](https://www.postfix.org/postconf.5.html#smtpd_sasl_path): Relative path to $queue_directory used to comunicate Postfix and Dovecot. This can also be configured via TCP.
+    - [smtpd_sasl_path](https://www.postfix.org/postconf.5.html#smtpd_sasl_path): Relative path to $queue_directory used to communicate Postfix and Dovecot. This can also be configured via TCP.
     - [smtpd_sasl_auth_enable](https://www.postfix.org/postconf.5.html#smtpd_sasl_auth_enable): To enable SASL.
 - Mail config
     - [mailbox_size_limit](https://www.postfix.org/postconf.5.html#mailbox_size_limit): Use 0 for unlimited mailbox size, the limit will be the host disk.
@@ -436,7 +436,11 @@ Now we have our certs in:
 
 This step will cover the config lines of Postfix and Dovecot referring to TLS.
 
-## Security
+## Mail clients
+
+Now you can configure Thunderbird or any mobile mail client, is as easy as following the wizard of the client and put the configuration of the SMTP and IMAP servers that we have configured and we will be ready to send and receive emails, but maybe our emails will still be blocked by some receiver email servers like Gmail or flagging them as spam. To improve this, let's move to the next chapter [Being Trustful](#being-trustful)
+
+## Being Trustful
 
 First of all, let's see how we can see the original content of an email in Gmail so we can always send an email from our mail server to a Gmail account and check few things:
 
@@ -577,3 +581,35 @@ mail._domainkey.oalfonso.com. 3600 IN TXT "v=DKIM1; h=sha256; k=rsa; " "p=MIIBIj
 
 Once you can see your DKIM record then we can test our DKIM sending and email to Gmail and checking the original content and verify if now Gmail flags our email as PASS with DKIM.
 
+### DMARC: Domain-based Message Authentication, Reporting & Conformance
+
+In simple, it's a layer of email authentication on top of SPF and DKIM, if SPF and DKIM are properly configured and we add a DNS record for DMARC Gmail will give us our PASS to DMARC. If we want a better description we can check the official page description:
+
+> DMARC, which stands for “Domain-based Message Authentication, Reporting & Conformance”, is an email authentication, policy, and reporting protocol. It builds on the widely deployed SPF and DKIM protocols, adding linkage to the author (“From:”) domain name, published policies for recipient handling of authentication failures, and reporting from receivers to senders, to improve and monitor protection of the domain from fraudulent email.
+
+You only have to create a DNS record:
+
+```
+    host name:  _dmarc.{REPLACE_YOURDOMAIN}
+    type:       TXT
+    data:       "v=DMARC1;p=reject;"
+```
+
+Check it with:
+
+``` bash
+$ dig +short _dmarc.oalfonso.com txt
+"v=DMARC1;p=reject;"
+```
+
+If `dig` responds with the data of your DNS record then we are ready.
+
+
+## Check the trustiness of your server
+
+There are multiple ways, you can search for online sites but my preferred ones are:
+
+1. Gmail: check original content as we've already seen.
+2. Mail Tester: [https://www.mail-tester.com](https://www.mail-tester.com) this gives more details
+If you have everything properly setup you should see an score of 10/10
+![Mail Tester](images/mail_tester.png)
