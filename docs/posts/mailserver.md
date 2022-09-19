@@ -447,7 +447,7 @@ $ useradd youruser -m
 $ passwd youruser
 ```
 
-Now you can configure desktop clients like [Thunderbird](https://www.thunderbird.ne) or mobile clients like [Blue Mail](https://play.google.com/store/apps/details?id=me.bluemail.mail). Is as easy as following the wizard of the client and put the configuration of the SMTP and IMAP servers that we have configured plus the user and password that we have created and we will be ready to send and receive emails, but maybe our emails will still be blocked (or flagged as spam) by some receiver email servers like Gmail. To improve this, let's move to the next chapter [Being Trustful](#being-trustful)
+Now you can configure desktop clients like [Thunderbird](https://www.thunderbird.ne) or mobile clients like [Blue Mail](https://play.google.com/store/apps/details?id=me.bluemail.mail). Is as easy as following the wizard of the client and put the configuration of the SMTP and IMAP servers that we have configured plus the user and password that we have created and we will be ready to send and receive emails, but maybe our emails will still be blocked (or flagged as spam) by some receiver email servers like Gmail. To improve this, let's move to the next chapter [Being Trustful](#being-trustful).
 
 ## Being Trustful
 
@@ -480,6 +480,14 @@ Now we should see TLS used but the SPF, DKIM and DMARC shouldn't pass, so or the
 
 Our goal to be trustful is to have all these three with the "PASS" flag. Let's understand each one.
 
+### Reverse DNS
+
+[Reverse DNS lookup](https://en.wikipedia.org/wiki/Reverse_DNS_lookup) is used to request a domain name based on an IP (the reverse of the typical DNS behaviour). This is used to prove that the owner of this IP is also the owner of the domain, because only the owner of the IP is the one with access to the hosting provider configuration panel to setup this reverse lookup. So this is used to be more trustful, when an email server gets an email, this server can automatically retrieve the IP of that domain, and then validate that domain with the reverse lookup and check that the IP is linked to the same domain. If not, then there's risk of spoofing.
+
+To configure this lookup there's no standard way, every hosting provider has a custom way for doing it, so the best is investingating it by yourself.
+
+To prove that the reverse DNS lookup is properly configured you can use [MXToolBox](https://mxtoolbox.com/ReverseLookup.aspx).
+
 ### SPF
 
 [SPF](https://es.wikipedia.org/wiki/Sender_Policy_Framework) stands for Sender Policy Framework. An SPF record is a DNS record of type TXT which declares the address of the real mail server. This record is used to detect when a third party is trying to impersonate your address from another IP.
@@ -488,7 +496,7 @@ For more detail, let's see the description from Wikipedia:
 
 > Sender Policy Framework (SPF) is an email authentication method designed to detect forging sender addresses during the delivery of the email. SPF alone, though, is limited to detecting a forged sender claim in the envelope of the email, which is used when the mail gets bounced. Only in combination with DMARC can it be used to detect the forging of the visible sender in emails (email spoofing), a technique often used in phishing and email spam.
 
-The server which will receive your email from your SMTP server will use your domain name to do a request to that domain and search for the SPF record, if the address of that SPF record matches the address of the sender then Gmaill will flag your email with the "PASS" for the SPF.
+The server which will receive your email from your SMTP server will use your domain name to do a request to that domain and search for the SPF record, if the address of that SPF record matches the address of the sender then Gmail will flag your email with the "PASS" for the SPF.
 
 The only thing to do is adding a DNS record like this:
 
@@ -502,11 +510,11 @@ Wait until the record is replicated, check it with:
 $ dig +noall +answer +multiline yourdomain.com txt
 yourdomain.com.		3600 IN	TXT "v=spf1 ip4:1.2.3.4/32 -all"
 ```
-When the response of the `dig` shows your SPF record then we are done and we can check it sending an email to a Gmail account, go to Show original and check if Gmail flags our SPF as PASS.
+When the response of the `dig` shows your SPF record then we are done and we can check it sending an email to a Gmail account, go to `Show original` and check if Gmail flags our SPF as PASS.
 
 ### DKIM
 
-[DKIM](https://es.wikipedia.org/wiki/DomainKeys_Identified_Mail) means DomainKeys Identified Mail and is an email authentication based on a pair of keys, one public and one private. The idea is to sign every email with the private key and then publish the public key in a DNS DKIM record (type TXT, like SPF) so the receiver can verify if the signed email matches the public key, if not, then this email has been spoofed.
+[DKIM](https://es.wikipedia.org/wiki/DomainKeys_Identified_Mail) means DomainKeys Identified Mail and is an email authentication based on a pair of keys, one public and one private. The idea is to sign every email with the private key and then publish the public key in a DNS DKIM record (type TXT, like SPF) so the receiver can verify if the signed email matches the public key, if not, then this email has been potentially spoofed.
 
 To sign our emails we configure Postfix to use OpenDKIM and this software will be the responsible of this action.
 
@@ -565,6 +573,7 @@ This private key is not created yet, let's create it:
 ``` bash
 $ cd /etc/opendkim/keys
 $ mkdir {REPLACE_YOURDOMAIN}
+$ cd {REPLACE_YOURDOMAIN}
 $ opendkim-genkey -s mail -d {REPLACE_YOURDOMAIN}
 $ chown opendkim:opendkim mail.private
 ```
@@ -611,6 +620,23 @@ _dmarc.yourdomain.com.	3600 IN	TXT "v=DMARC1;p=reject;"
 
 If `dig` responds with the data of your DNS record then we are ready.
 
+
+## Summarize
+
+Now we have everything configured, if something fails we should check step by step checking the logs, and to be able to follow step by step let's see which is the flow of an email with all these pieces:
+
+<!-- sender_client -> postfix_sender -> use_tls
+postfix_sender -> dovecot_auth
+    dovecot_auth -> pam
+    pam -> ok -> dovecot_auth -> ok
+postfix_sender -> opendkim -> signs_email
+postfix_sender -> smtp_server_receiver -> use_tls
+smtp_server_receiver -> reverse_dns_lookup -> ok
+smtp_server_receiver -> dns_check_spf -> ok
+smtp_server_receiver -> dns_check_dkim -> ok
+smtp_server_receiver -> dns_check_dmarc -> ok
+smtp_server_receiver -> imap_server_receiver
+imap_server_receiver -> receiver_client -->
 
 ## Validate trustiness
 
