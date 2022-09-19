@@ -447,7 +447,7 @@ $ useradd youruser -m
 $ passwd youruser
 ```
 
-Now you can configure Linux clients like [Thunderbird](https://www.thunderbird.ne) or any mobile mail client like [Blue Mail](https://play.google.com/store/apps/details?id=me.bluemail.mail). Is as easy as following the wizard of the client and put the configuration of the SMTP and IMAP servers that we have configured plus the user and password that we have created and we will be ready to send and receive emails, but maybe our emails will still be blocked (or flagged as spam) by some receiver email servers like Gmail. To improve this, let's move to the next chapter [Being Trustful](#being-trustful)
+Now you can configure desktop clients like [Thunderbird](https://www.thunderbird.ne) or mobile clients like [Blue Mail](https://play.google.com/store/apps/details?id=me.bluemail.mail). Is as easy as following the wizard of the client and put the configuration of the SMTP and IMAP servers that we have configured plus the user and password that we have created and we will be ready to send and receive emails, but maybe our emails will still be blocked (or flagged as spam) by some receiver email servers like Gmail. To improve this, let's move to the next chapter [Being Trustful](#being-trustful)
 
 ## Being Trustful
 
