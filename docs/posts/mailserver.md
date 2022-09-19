@@ -625,18 +625,22 @@ If `dig` responds with the data of your DNS record then we are ready.
 
 Now we have everything configured, if something fails we should check step by step checking the logs, and to be able to follow step by step let's see which is the flow of an email with all these pieces:
 
-<!-- sender_client -> postfix_sender -> use_tls
-postfix_sender -> dovecot_auth
-    dovecot_auth -> pam
-    pam -> ok -> dovecot_auth -> ok
-postfix_sender -> opendkim -> signs_email
-postfix_sender -> smtp_server_receiver -> use_tls
-smtp_server_receiver -> reverse_dns_lookup -> ok
-smtp_server_receiver -> dns_check_spf -> ok
-smtp_server_receiver -> dns_check_dkim -> ok
-smtp_server_receiver -> dns_check_dmarc -> ok
-smtp_server_receiver -> imap_server_receiver
-imap_server_receiver -> receiver_client -->
+``` mermaid
+graph LR
+    client_sender --tls--> postfix_sender;
+    postfix_sender == 1. auth ==> dovecot_auth{{dovecot_auth}} --> pam{{pam}};
+    pam -. ok .-> dovecot_auth{{dovecot_auth}} -. ok .-> postfix_sender;
+    postfix_sender == 2. dkim ==> opendkim{{opendkim}} -. signs_email .-> postfix_sender;
+    postfix_sender == 3. tls ==> smtp_server_receiver;
+    smtp_server_receiver == 4 ==> validation{{validation}};
+    validation --> reverse_dns_lookup{{reverse_dns_lookup}} -. ok .-> validation;
+    validation --> dns_check_spf{{dns_check_spf}} -. ok .-> validation;
+    validation --> dns_check_dkim{{dns_check_dkim}} -. ok .-> validation;
+    validation --> dns_check_dmarc{{dns_check_dmarc}} -. ok .-> validation;
+    validation -. ok .-> smtp_server_receiver;
+    smtp_server_receiver == 5 ==> imap_server_receiver;
+    imap_server_receiver == 6 ==> client_receiver;
+```
 
 ## Validate trustiness
 
