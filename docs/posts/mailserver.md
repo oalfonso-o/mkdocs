@@ -485,11 +485,19 @@ The only thing to do is adding a DNS record like this:
     data:       "v=spf1 ip4:{REPLACE_YOURIP}/32 -all"
 ```
 
+Wait until the record is replicated, check it with:
+
+```
+$ dig +noall +answer +multiline oalfonso.com txt
+oalfonso.com.		3600 IN	TXT "v=spf1 ip4:78.47.100.194/32 -all"
+```
+When the response of the `dig` shows your SPF record then we are done
+
 ### DKIM: DomainKeys Identified Mail
 
 DKIM is an email authentication based on a pair of keys, one public and one private. The idea is to sign every email with the private key and then publish the public key in a DNS DKIM record (type TXT, like SPF) so the receiver can verify if the signed email matches the public key, if not, then this email has been spoofed.
 
-To sign our emails we configure postfix to use OpenDKIM, which we have to install.
+To sign our emails we configure Postfix to use OpenDKIM and this software will be the responsible of this action.
 
 #### Installing OpenDKIM
 
@@ -512,3 +520,60 @@ Now let's create a directory structure that will hold the trusted hosts, key tab
 ``` bash
 mkdir -p /etc/opendkim/keys
 ```
+
+Then we have to specify our trusted hosts:
+
+``` c linenums="1" title="/etc/opendkim/TrustedHosts"
+127.0.0.1
+localhost
+192.168.0.1/24
+*.{REPLACE_YOURDOMAIN}
+```
+
+And our signing table which maps domains/email addresses and their selectors:
+
+``` c linenums="1" title="/etc/opendkim/SigningTable"
+*@{REPLACE_YOURDOMAIN} mail._domainkey.{REPLACE_YOURDOMAIN}
+```
+
+Now we need to specify the key table, which maps the domain with the key:
+
+``` c linenums="1" title="/etc/opendkim/KeyTable"
+mail._domainkey.{REPLACE_YOURDOMAIN} {REPLACE_YOURDOMAIN}:mail:/etc/opendkim/keys/{REPLACE_YOURDOMAIN}/mail.private
+```
+!!! info ""
+
+    Remember to replace REPLACE_YOURDOMAIN
+
+This private key is not created yet, let's create it:
+
+``` bash
+cd /etc/opendkim/keys
+mkdir {REPLACE_YOURDOMAIN}
+opendkim-genkey -s mail -d {REPLACE_YOURDOMAIN}
+chown opendkim:opendkim mail.private
+```
+
+Now in the directory with the name of your domain now there will appear two files, the key and the DNS TXT record data. In the `mail.txt` file we will see something like this:
+
+    mail._domainkey	IN	TXT	( "v=DKIM1; h=sha256; k=rsa; "
+	  "p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAy+KHNcYaCf4RN2yLNPkJB+1h8OaLQywOZ+R+PlC4w0N5QBRwX4R14mTx3uEbWCEI3dqwaI6nxVv7xImeTMEmYSrOUgcsCVLKirxLeQm5N6mjdwoS8zLA5I0Y2bpJTVE7RDZ75ZuqGrI1dpQlOiNAAocbBQnj2ThfS9zh8riNN+t8/yAwq58JDVjb9pe3VvxZb3iYFgY2IDFPJ7"
+	  "9vVmh0mfcR7xsiR+i/ig/noLBLZErayNOoG0YR4plI9fNbvKY7sMUnVTOLi5I6TOy9xOVjV6wZa29QPXqyFOBhlOoEJ+PVtfK8yRgqNc8nxOndK1EUt0/gvw9wP3qsKe7DZifjvwIDAQAB" )  ; ----- DKIM key mail for yourdomain.com
+
+We copy everything between the parenthesis and we are ready to create our DKIM record, from the v=DKIM1 until the whole pub key, respecting the `"` and spaces:
+
+```
+    host name:  mail._domainkey.{REPLACE_YOURDOMAIN}
+    type:       TXT
+    data:       "{REPLACE_YOURDKIMDATA}"
+```
+
+Now restart Postfix and OpenDKIM, wait until the DNS record is replaced. Check it with:
+
+``` bash
+$ dig +noall +answer +multiline mail._domainkey.oalfonso.com txt
+mail._domainkey.oalfonso.com. 3600 IN TXT "v=DKIM1; h=sha256; k=rsa; " "p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAy+KHNcYaCf4RN2yLNPkJB+1h8OaLQywOZ+R+PlC4w0N5QBRwX4R14mTx3uEbWCEI3dqwaI6nxVv7xImeTMEmYSrOUgcsCVLKirxLeQm5N6mjdwoS8zLA5I0Y2bpJTVE7RDZ75ZuqGrI1dpQlOiNAAocbBQnj2ThfS9zh8riNN+t8/yAwq58JDVjb9pe3VvxZb3iYFgY2IDFPJ7" "9vVmh0mfcR7xsiR+i/ig/noLBLZErayNOoG0YR4plI9fNbvKY7sMUnVTOLi5I6TOy9xOVjV6wZa29QPXqyFOBhlOoEJ+PVtfK8yRgqNc8nxOndK1EUt0/gvw9wP3qsKe7DZifjvwIDAQAB"
+```
+
+Once you can see your DKIM record then we can test our DKIM sending and email to Gmail and checking the original content and verify if now Gmail flags our email as PASS with DKIM.
+
