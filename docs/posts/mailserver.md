@@ -329,7 +329,7 @@ yourdomain.com.		3224 IN	MX 0 mail.yourdomain.com.
 
 With this we can request our certificates, let's move to [Certificates](#certificates) section.
 
-## Certificates
+## TLS Certificates
 
 The main goals of this step are:
 
