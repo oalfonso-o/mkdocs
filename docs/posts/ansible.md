@@ -132,7 +132,7 @@ If we run this playbook it will try to install the roles `install_http_server` a
 
 ## Defining hosts
 
-The master piece here is the `inventory`. An inventory is a file that contains a list of hosts that our ssh client can identify. Also, these hosts can be grouped in groups, so we can run tasks/roles to specific hosts or specific groups.
+The master piece here is the `inventory`. An inventory is a file that contains a list of hosts that our ssh client can identify. Also, these hosts can be defined in groups, so we can run tasks/roles to specific hosts or specific groups.
 
 To make our work easier in Ansible when specifying hosts a good practice is using the `config` ssh file and put there all the specifics of the hosts and then here in our inventories specify only the `name` of the host and our ssh client will resolve all the needed config using the `config` file.
 
@@ -144,7 +144,11 @@ Hostname    1.2.3.4
 User        root
 ```
 
-Now what before was `ssh root@1.2.3.4` now is only `ssh httphost`. And the same in the `inventory`, we can use the id `httphost` in our ansible inventory.
+Now we can do ssh with only `ssh httphost` instead of `ssh root@1.2.3.4`. And the same in the `inventory`, we can use the id `httphost` in our ansible inventory.
+
+!!! info ""
+
+    Here we are assuming that the pub key is in the `authorized_keys` of the remote host.
 
 So we can define an inventory, which is just a file in our ansible project, normally at root level named `hosts`:
 
