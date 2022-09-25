@@ -81,7 +81,7 @@ Boom! We are losing money! This is not a sustainable way of doing business.
 
 This example looks pretty obvious but I've seen this scenario many times.
 
-Which are the causes of this scenario?
+### Which are the causes of this scenario?
 
 This is the best question to do when we identify this, and it can be summarized to these 3 items or a combination of them:
 
@@ -95,7 +95,7 @@ Who was the manager of this team? The project manager? The backend engineer? The
 
 Having a manager who is totally responsible for achieving these company goals is key to avoid this situation. This manager can be the backend, the project manager or even a manager who is not solving any technical task, but is aware of the whole process and will be monitoring the whole process. Without this role, the risk is too high. Is like when you are with your friends going to a restaurant and after a couple of minutes somebody says: "Where are we going" "I don't know, I was following Bob" and Bob says: "Me? I was following Tom" and Tom went home 1 hour ago, so nobody knows where we are going but we keep walking randomly because it was what we were supposed to do.
 
-Learnings from this scenario:
+### Learnings from this scenario
 
 - Having a manager is critical, and somebody has to be responsible for assigning this manager.
 - Focus first on the critical features, close one delivery, then move to the next one.
@@ -136,7 +136,7 @@ Cons of this:
 - eventually these 3 people will do changes in their own systems without reflecting the changes in the other systems
 - this is very time consuming and frustrating when we can't gather the desired data
 
-How to solve this with the KISS principle?
+### How to solve this with the KISS principle?
 
 - Have only 1 person responsible for this, this person can be anybody, the project manager, a developer or a manager.
 - This person can use any combination of tools of her desire but has to be able to express everything in plain, without complexity. And for everything we understand:
@@ -152,4 +152,10 @@ If this person can achieve these two things and report the progress properly, th
 
 ## Conclusions
 
-The KISS principle is not complex at all, is very plain, IMHO this can be translated to: have the best people doing the job.
+To avoid these kind of problems:
+
+1. Accountability: having always a good manager, a single responsible.
+2. Prioritize: this manager has to always drive the development towards the most important features in the first place.
+3. Observability: this manager has to be able to report clearly the status of the project.
+
+The KISS principle is not complex at all, is very plain, IMHO this can be translated to: have the best people doing the job. The best people always are aware of everything and they don't allow this kind of things to happen.
