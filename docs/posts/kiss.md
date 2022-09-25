@@ -64,7 +64,7 @@ The project is planned to be done in 2 phases, the first one with the critical f
 In the first phase, we have planned to invoice 200$ to our client, because it will be done in 4 weeks, as we have planned. so the costs are aprox:
 
 - 10$ * 3 people * 4 weeks = 120$ of cost
-- revenue 200$ - 120$ = **80$ of profit**
+- revenue 200$ - 120$ = <green>**80$ of profit**</green>
 
 But this is what was planned, now let's do the math with the situation that we've seen:
 
@@ -75,7 +75,7 @@ And now, as we have the critical features at 50% of development, we can't invoic
 Imagine that we finally close the phase 1 after 2 more weeks, because somebody realizes that we have been planning wrong, so we drive our development towards closing the first phase. So this will be the math:
 
 - 10$ * 3 people * 10 weeks = 300$ of cost
-- revenue 200$ - 300$ = **-100$ of profit**
+- revenue 200$ - 300$ = <red>**-100$ of profit**</red>
 
 Boom! We are losing money! This is not a sustainable way of doing business.
 
