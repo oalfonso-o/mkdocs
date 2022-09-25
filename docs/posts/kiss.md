@@ -14,7 +14,7 @@ I've seen plenty of times projects that don't reach the deadline but they have m
 
 I've also seen a project with non-critical features developed 3 years before the go-live stage, not tested in production, so once in production these features were obsolete and they had to be removed and start them again from scratch, no refactor was possible there. Months of development wasted.
 
-The problem here is that sometimes we put at the same level the critical feature and the "nice to have" feature. The client is always going to request as many things as possible for the less price and less time available. But we should know that we are not going to provide everything to our client (and the client can be external or internal, doesn't matter, the client is the third party that is requesting some features).
+The problem here is that sometimes we put at the same level the critical feature and the "nice to have" feature. **The client is always going to request as many things as possible for the less price and less time available.** But we should know that we are not going to provide everything to our client (and the client can be external or internal, doesn't matter, the client is the third party that is requesting some features).
 
 Let's put an example. Imagine a client which requests us a data processing pipeline that should process daily music usages from Spotify (we get the data from Spotify in behalf of our client using their legal agreement) and generate daily reports from these usages and present them in a web interface, the data that the client wants to know is their revenue in Spotify by day/month. Here we can list the critical features and the "nice to have" features:
 
@@ -125,7 +125,7 @@ For example, having a calendar in basecamp with delivery dates and then an sprea
 - in the Basecamp calendar we have 7 deliveries, which link to 7 tickets in Jira
 - in the digital board tool we have the 30 tasks linked to 30 Jira tickets but without delivery dates, and also 30 more tasks that belong to Phase 2, but they are related so it's hard to isolate Phase 1 and Phase 2.
 
-Pros os this:
+Pros of this:
 
 - you have all the information
 
