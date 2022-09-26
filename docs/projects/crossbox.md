@@ -1,3 +1,3 @@
-# Crossbox
+# Crossbox - App to handle reservations of Crossbox Palau
 
-TODO
+{{ external_markdown('https://raw.githubusercontent.com/oalfonso-o/crossbox/master/README.md', '') }}

@@ -103,3 +103,4 @@ extra_css:
   - stylesheets/extra.css
 plugins:
   - glightbox
+  - external-markdown
