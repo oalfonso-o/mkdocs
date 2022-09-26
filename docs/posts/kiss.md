@@ -89,7 +89,7 @@ This is the best question to do when we identify this, and it can be summarized 
 - team not responsible/motivated for their job
 - team not senior enough
 
-At the end, this is a team problem. So the maximum guilty of this situation is the one leading/managing this team.
+At the end, this is a team problem. So the maximum responsible of this situation is the one leading/managing this team.
 
 Who was the manager of this team? The project manager? The backend engineer? The frontend? Sometimes the project doesn't start with these roles clearly defined and it's pretty easy to arrive to these scenarios. People closing tickets but not understanding what the company tries to achieve with this project.
 
