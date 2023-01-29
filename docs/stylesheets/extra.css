@@ -31,3 +31,8 @@
 }
 red { color: Red }
 green { color: Green }
+
+.center {
+    display: block;
+    margin: 0 auto;
+}
