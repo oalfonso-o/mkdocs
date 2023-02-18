@@ -11,18 +11,18 @@ nav:
     - Mail Server with Postfix and Dovecot: posts/mailserver.md
     - Ansible: posts/ansible.md
     - Terraform: posts/terraform.md
-    - Spark: posts/spark.md
-    - Python Asyncio: posts/python_async.md
-    - Python Multiprocessing: posts/python_async.md
-    - Python Threading: posts/python_async.md
-    - Elasticsearch: posts/elasticsearch.md
-    - MongoDB: posts/mongodb.md
-    - Clickhouse: posts/clickhouse.md
+    # - Spark: posts/spark.md
+    - Python co-routines and asyncio: posts/python_async.md
+    # - Python Multiprocessing: posts/python_async.md
+    # - Python Threading: posts/python_async.md
+    # - Elasticsearch: posts/elasticsearch.md
+    # - MongoDB: posts/mongodb.md
+    # - Clickhouse: posts/clickhouse.md
     - KISS: posts/kiss.md
-    - Scaling a Company: posts/scaling_a_company.md
-    - Team Culture: posts/team_culture.md
-    - Kafka: posts/kafka.md
-    - Airflow: posts/airflow.md
+    # - Scaling a Company: posts/scaling_a_company.md
+    # - Team Culture: posts/team_culture.md
+    # - Kafka: posts/kafka.md
+    # - Airflow: posts/airflow.md
   - Projects:
     - projects/index.md
     - Crossbox: projects/crossbox.md
