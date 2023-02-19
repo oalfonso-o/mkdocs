@@ -110,3 +110,4 @@ plugins:
   - external-markdown
   - git-revision-date-localized:
       enable_creation_date: true
+      type: timeago
