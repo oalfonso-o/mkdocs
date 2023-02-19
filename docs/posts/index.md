@@ -11,13 +11,13 @@ Tutorial with the basics of Ansible, explaining the importance of defining the c
 * [Terraform](terraform.md):
 101 of Terraform in the simple way, just to explain how easy is to define our own AWS resources as code to keep track of everything.
 
-* [Spark](spark.md):
-All the needed baby steps to be able to run Spark Python Applications in a distributed cluster using YARN, parquet files and Hadoop with S3.
+<!-- * [Spark](spark.md):
+All the needed baby steps to be able to run Spark Python Applications in a distributed cluster using YARN, parquet files and Hadoop with S3. -->
 
-* [Python Asyncio](python_async.md):
-Understanding how asyncio works and its benefits. Checking how much performance improvement we can get of a single process when running multiple IO operations async in Python vs a single process with locking IO operations.
+* [Python coroutines and asyncio](python_async.md):
+Understanding how asyncio works and its benefits. Checking how much performance improvement we can get of a single thread when running multiple IO operations async in Python vs a single process with locking IO operations.
 
-* [Python Multiprocessing](python_async.md):
+<!-- * [Python Multiprocessing](python_async.md):
 Understanding the basics of multiprocessing in Python and how to deal with the parallelization of work in a single host without much pain.
 
 * [Python Threading](python_async.md):
@@ -30,12 +30,12 @@ Overview of one of the most popular search engines of the moment. Building a sim
 Presentation of the benefits of one of the simplest and most powerful document oriented database.
 
 * [Clickhouse](clickhouse.md):
-Understanding why clickhouse is (like Redshift) one of the best columnar database for live analytics. Learning the basics, how it scales and benchmarks against Redshift. Spoiler: Clickhouse is open source.
+Understanding why clickhouse is (like Redshift) one of the best columnar database for live analytics. Learning the basics, how it scales and benchmarks against Redshift. Spoiler: Clickhouse is open source. -->
 
 * [KISS](kiss.md):
 Keep It Simple, Stupid. Explaining the importance of understanding the problem before proposing a solution via ficticional scenarios based on real life experiences.
 
-* [Scaling a Company](scaling_a_company.md):
+<!-- * [Scaling a Company](scaling_a_company.md):
 That moment when an startup goes from 20 to 100, and then again from 100 to 200. And then you want to go again up to x2. In every step there are changes. Painful changes. Sharing some learnings and the consecuences of the legacy in the growth but the importance of tackling the legacy of the growth once we find it and not before.
 
 * [Team Culture](team_culture.md):
@@ -45,4 +45,4 @@ We have heard about 10x engineers, this can be polemic or not but it's a reality
 Understanding Kafka, pros and cons, and in which cases you should or shouldn't need it instead of simpler approaches. Using a real life example of paying the price of Kafka's complexity for a data pipeline that could be defined much simpler because it wasn't going to use the benefits of Kafka.
 
 * [Airflow](airflow.md):
-Let's orchestrate our ETLs with Airflow, a webserver, an scheduler, a broker and some Celery workers to do our work when we need.
+Let's orchestrate our ETLs with Airflow, a webserver, an scheduler, a broker and some Celery workers to do our work when we need. -->
