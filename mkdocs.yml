@@ -1,5 +1,6 @@
 site_name: oalfonso
 site_url: https://oalfonso.com/
+repo_url: https://github.com/oalfonso-o/mkdocs
 nav:
   - Home:
     - index.md
@@ -107,3 +108,5 @@ extra_css:
 plugins:
   - glightbox
   - external-markdown
+  - git-revision-date-localized:
+      enable_creation_date: true
