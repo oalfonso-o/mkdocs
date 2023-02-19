@@ -12,7 +12,7 @@ nav:
     - Ansible: posts/ansible.md
     - Terraform: posts/terraform.md
     # - Spark: posts/spark.md
-    - Python co-routines and asyncio: posts/python_async.md
+    - Python coroutines and asyncio: posts/python_async.md
     # - Python Multiprocessing: posts/python_async.md
     # - Python Threading: posts/python_async.md
     # - Elasticsearch: posts/elasticsearch.md
