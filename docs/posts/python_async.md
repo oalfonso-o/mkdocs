@@ -18,7 +18,7 @@ Good question, using multiple threads in Python is another way of concurrency. I
 So which are the differences? Let's mention the two main benefits of coroutines vs threads:
 
 - coroutines live in a single thread and single process and can have millions of them working concurrently, but when doing threads we can't spawn this amount of threads per process because we have the OS limitation
-- as coroutines work in a single thread there's much more control over race conditions (when managed properly) and easier debugging
+- as coroutines work in a single thread there's much more control over race conditions and are easier to debug (when managed properly)
 
 ## And why not multiprocessing?
 
@@ -127,7 +127,7 @@ So we can concurrently have 10 "sleeps" in just 3 seconds. The sleep could be re
 
 This concept looks simple, but it can become extremely complicated when having to define this kind of tasks for other operations more complicated than a simple wait. For example doing an HTTP request or a query to a database.
 
-For an HTTP request we normally use `requests` library or `urllib3` because it's the builtin, but both are blocking, so we will have to wait until each request finishes. To be able to do requests concurrently we need to implement something like what we've seen in this snippet but for performing an HTTP request non blocking. And this is what does `aiohttp` which implements websockets to retrieve the data of that request in a non-blocking manner. For more details of this library you can check the code on github [https://github.com/aio-libs/aiohttp]().
+For an HTTP request we normally use `requests` library or `urllib3` because it's the builtin, but both are blocking, so we will have to wait until each request finishes. To be able to do requests concurrently we need to implement something like what we've seen in this snippet but for performing an HTTP request non blocking. And this is what does `aiohttp` which uses sockets to retrieve the data of that request in a non-blocking manner. For more details of this library you can check the code on Github [https://github.com/aio-libs/aiohttp]().
 
 But here we are going too fast, let's not jump yet to `aiohttp`, let's try to understand better how coroutines work, because we've seen how to do sleeps concurrently but we've not seen any `yield` nor generator. Let's see another example and we will understand how `yield` plays in this game and what coroutines are.
 
@@ -159,11 +159,11 @@ No mistery here, a classical generator. You iterate it and it keeps yielding eac
 ### Python coroutines
 
 ``` python
-def mycoro():
-    c = 0
-    for i in range(10):
-        c += yield i
-        print(f"Inside of generator value of c {c}")
+>>> def mycoro():
+...     c = 0
+...     for i in range(10):
+...         c += yield i
+...         print(f"Inside of generator value of c {c}")
 ```
 
 Here the difference is that instead of doing just a `yield` we are also expecting a value coming back from that `yield` and adding it to `c`.
@@ -212,12 +212,11 @@ Inside of generator value of c 36.5
 4
 ```
 
-Did you see? We are returning always the value of `i` which is defined by the `range` but we are also sending arbitrary numbers that change the behaviour of the generator.
-This is now a coroutine!
+Did you see? We are returning always the value of `i` which is defined by the `range` but we are also sending arbitrary numbers that change the behaviour of the generator. This is a really powerful feature of generators that is used to create coroutines.
 
-### Replace the concurrent example with coroutines
+### Replace the concurrent example with a generator
 
-Let's replace our initial example of the `Task` and our event loop where we do concurrent sleeps, but now with coroutines:
+Let's replace our initial example of the `Task` and our event loop where we do concurrent sleeps, but now with a generator:
 
 ``` python
 >>> import time
@@ -256,11 +255,11 @@ Total time: 3.000023126602173
 [1, 2, 3, 4, 5]
 ```
 
-That's it, we can concurrently handle sleeps with coroutines, sending a value every time we call the coroutine (which in this case is a None) and getting back also a value which is yielded.
+That's it, we can concurrently handle sleeps with generators, which can be called coroutines too, sending a value every time we call the generator (which in this case is a None) and getting back also a value which is yielded. This code here is performing a pretty simple `sleep` logic, but the important thing here is the fact that this paradigm allows us to implement more complicated concurrent logic using a single process and a single thread.
 
-But we don't want to be the ones managing this complexity, so we can use better tools and this feature of having bidirectional communication is the one used under the hood of [`async` and `await`, the two new keywords added since Python 3.5](https://docs.python.org/3/whatsnew/3.5.html#whatsnew-pep-492). Also, this feature is the one used to build [asyncio](https://docs.python.org/3/library/asyncio.html), the default Python way to work with async.
+Ok, pretty nice, but we don't want to be the ones managing this complexity, so we can use better tools and this feature of having bidirectional communication is the one used under the hood of [`async` and `await`, the two new keywords added since Python 3.5](https://docs.python.org/3/whatsnew/3.5.html#whatsnew-pep-492). Also, this feature is the one used to build [asyncio](https://docs.python.org/3/library/asyncio.html), the default Python way to work with async.
 
-So now we can forget everything about coroutines and focus on these beautiful improved tools that make everything much more friendly.
+So now we can forget everything about coroutines and focus on these beautiful tools that make everything much more friendly.
 
 ## async & await
 
@@ -333,105 +332,125 @@ So we use the `asyncio.get_event_loop` to create the event loop and then we add 
 
 ## Async HTTP requests
 
-Now, with asyncio and aiohttp we can implement a simple concurrent program to perform HTTP requests. Let's do an example doing requests to BMAT webpage first in sequential manner:
+Now, with `asyncio` and `aiohttp` we can implement a simple concurrent program to perform HTTP requests. Let's do an example doing requests to BMAT webpage first in sequential manner:
 
 ```python
 >>> import requests
 >>> import time
 >>> 
->>> start_time = time.time()
->>> for i in range(5):
-...     iter_time = time.time()
-...     _ = requests.get("https://www.bmat.com/")
-...     print(f"Iteration {i}, time: {time.time() - iter_time}")
+>>> def run():
+...     start_time = time.time()
+...     for _ in range(3):
+...         requests.get("https://www.bmat.com/")
+...     print(f"Total time: {time.time() - start_time}")
 ... 
-Iteration 0, time: 1.0509614944458008
-Iteration 1, time: 0.9052777290344238
-Iteration 2, time: 1.0390279293060303
-Iteration 3, time: 0.9445846080780029
-Iteration 4, time: 1.001107931137085
->>> print(f"Total time: {time.time() - start_time}")
-Total time: 4.945826292037964
+>>> run()
+Total time: 3.1911020278930664
 ```
 
-Classical way of doing it.
+Ok, ~3 secs to load 3 times our web, each time we hit bmat.com we wait for the response, each request is 1 sec, so 3 times 3 secs, this is how we do an http request normally.
 
 Now let's see how it's done async for doing a single request:
 
 ``` python
-import asyncio
-import aiohttp
-
-async def main():
-    async with aiohttp.ClientSession() as session:
-        async with session.get('https://www.bmat.com/') as resp:
-            resp.status
-            await resp.text()
-
-asyncio.run(main())
+>>> import time
+>>> import asyncio
+>>> import aiohttp
+>>> 
+>>> async def main():
+...     start_time = time.time()
+...     async with aiohttp.ClientSession() as session:
+...         async with session.get('https://www.bmat.com/') as resp:
+...             await resp.text()
+...     print(f"Total time: {time.time() - start_time}")
+... 
+>>> x = asyncio.run(main())
+Total time: 0.973656177520752
 ```
 
 Lot of stuff, for just a request, but the thing is that at every `async`/`await` step we are allowing the code to give away the control to schedule another IO call in the meantime.
-But it's important to understand that everything that is `async`, has to be defined with `async`, and everything that is `async` has to be called with `await`.
+It's important to understand that everything that is `async`, has to be defined with `async` and called with `await`.
 
-So running multiple requests concurrently would be something like this:
+And now running multiple requests concurrently would be something like this:
 
 ``` python
+>>> import time
 >>> import asyncio
 >>> import aiohttp
->>> import time
 >>> 
->>> 
->>> async def fetch(session, url):
-...     async with session.get(url) as response:
-...         return await response.json()
+>>> async def fetch(session, id_):
+...     async with session.get("https://www.bmat.com/") as response:
+...         print(id_)
+...         return await response.text()
 ... 
->>> 
->>> async def fetch_all(urls, loop):
-...     async with aiohttp.ClientSession(loop=loop) as session:
-...         results = await asyncio.gather(
-...             *[fetch(session, url) for url in urls]
-...         )
-...         return results
+>>> async def main(num_requests):
+...     start_time = time.time()
+...     async with aiohttp.ClientSession() as session:
+...         results = await asyncio.gather(*[fetch(session, i) for i in range(num_requests)])
+...     print(f"Total time: {time.time() - start_time}")
 ... 
->>> 
->>> start_time = time.time()
->>> urls = ['https://www.bmat.com/' for _ in range(3)]
->>> loop = asyncio.get_event_loop()
->>> htmls = loop.run_until_complete(fetch_all(urls, loop))
->>> loop.close()
->>> print(len(htmls))
-3
->>> print(f"Total time: {time.time() - start_time}")
-Total time: 1.1772162914276123
+>>> x = asyncio.run(main(3))
+1
+0
+2
+Total time: 1.033045768737793
 ```
 
-So we have it! We can do HTTP requests concurrently!
+Notice that the order of the IDs is not sequential and the time instead of 3 seconds now is just 1 second. So we have it, we are doing HTTP requests concurrently.
 
-But this is not pure magic, at the end there's only one single thread managing all the requests, and to be able to run the request and keep receiving the data while the Python code starts triggering a new request aiohttp has to bind the request somehow, and it's using websockets, which open a file in disk where the data is being streamed. This has some overhead so we are not going to see these numbers when running 100 concurrent requests, the amount of time is different, let's see what happens with 100:
+But this is not pure magic, at the end there's only one single thread managing all the requests, and to be able to run the request and keep receiving the data while the Python code starts triggering a new request aiohttp has to bind the request somehow, for example using sockets, which open a file in disk. This has some overhead so we are not going to see these numbers when running 10, 1k or 100k concurrent requests, the amount of time is different. Let's see what happens with 4, 5, etc up to 10 requests:
 
 ``` python
->>> start_time = time.time()
->>> urls = ['https://www.bmat.com/' for _ in range(100)]
->>> loop = asyncio.get_event_loop()
->>> htmls = loop.run_until_complete(fetch_all(urls, loop))
->>> loop.close()
->>> print(len(htmls))
-100
->>> print(f"Total time: {time.time() - start_time}")
-Total time: 41.78710341453552
+>>> x = asyncio.run(main(4))
+3
+0
+2
+1
+Total time: 1.4146854877471924
+>>> x = asyncio.run(main(5))
+1
+4
+3
+2
+0
+Total time: 1.6316821575164795
+>>> x = asyncio.run(main(6))
+4
+...
+5
+Total time: 1.8495571613311768
+>>> x = asyncio.run(main(7))
+0
+...
+4
+Total time: 2.319329023361206
+>>> x = asyncio.run(main(8))
+7
+...
+5
+Total time: 2.5303142070770264
+>>> x = asyncio.run(main(9))
+4
+...
+5
+Total time: 2.90022611618042
+>>> x = asyncio.run(main(10))
+3
+...
+9
+Total time: 3.095855236053467
 ```
 
-We were expecting 1 second, but nope. We can see that with the `sleep` case because it's an incredible simple example, but real world cases are much more complex.
+We were expecting 1 second, but nope. With the `sleep` case we were having this scenario where 1 request is 1 sec and 10 requests are also 1 sec, just because it's an incredible simple example, but more complex logic is more expensive. For 10 requests instead of 1 second it's taking 3 seconds. Here the reason can be because of multiple factors but now the important is just to see that async is not magic and it's not going to "parallelize" everything. We are handling the async request from the client side, but we don't know how the server processes the requests, let's jump now to the server side.
 
 
 ## WSGI vs ASGI, Flask vs FastAPI
 
-Now that we have the basics covered, let's move closer to the real world problems that we have in our jobs every day. How to scale the throughput of our APIs.
+Now that we have the basics covered, let's see how to scale the throughput of our APIs. So let's talk about the most hyped Python HTTP microframeworks Flask and FastAPI:
 
-Flask is an amazing Python HTTP microframework that works perfectly fine under `WSGI`. The problem with `WSGI` is that it can't process async requests. When you do a request to an API that speaks `WSGI`, that worker gets blocked until the response is sent, so if there are hundreds of hits to the database and the request lasts 30 seconds to resolve, that process will be completely blocked for those full 30 seconds.
+[Flask](https://github.com/pallets/flask) is an amazing Python HTTP microframework that works perfectly fine under [`WSGI`](https://peps.python.org/pep-3333/). The problem with `WSGI` is that it can't process async requests, it can manage concurrency with threads and parallelization with multiple processes, but has no support for async. When you do a request to an API that speaks `WSGI`, with one single worker with one single thread with no buffer to keep incoming requests, that API gets blocked until the response is sent, so if in that endpoint there's a query to the database which takes 1 second and we are doing 2 requests per second, our API is going to take the first one at time 0, then another request will hit the API at 0.5 but our worker will be busy, so that request is not going to be answered, if the client has no retries then that request is lost (assuming our server has no buffer to retain incoming requests), then at second 1 our worker will be free again an will pick the new incoming request. At the best this is serving only 50% of the requests. Of course in production environments we have a web server in front with a buffer that can hold more incoming requests, we have multiple workers, each worker can have multiple threads, so normally this scenario shouldn't happen, it's for understanding the concept.
 
-FastAPI in the other hand comes by default as an async HTTP framework, with `starlette` under the hood, an `ASGI` framework which removes the blocking that we mentioned that happens with `WSGI`. A request that will hit the database 100 times, if all of those requests are done with async clients we will be able to trigger the query to the database and then start serving another request in the meantime.
+[FastAPI](https://github.com/tiangolo/fastapi) in the other hand comes by default as an async HTTP framework, with [`starlette`](https://github.com/encode/starlette) under the hood which works on top of [`anyio`](https://github.com/agronholm/anyio/) which comes on top of [`asyncio`](https://docs.python.org/3/library/asyncio.html). FastAPI is an [`ASGI`](https://asgi.readthedocs.io/) framework which removes the blocking that we mentioned that happens with `WSGI`. If we receive 2 requests per second and each request takes 1 second to process, in the previous scenario we could only serve 50% of the requests, but here we take advantage of the IO waiting time, we stop waiting for that response putting that request on hold and start serving another request for later coming back and checking if we got our answer.
 
 Ok, all this theory is amazing but we want examples.
 
@@ -472,6 +491,11 @@ And to run it (with fastapi and uvicorn installed):
 ``` bash
 uvicorn asyncfastapi:app --port 6000
 ```
+
+From so on we assume that both servers are up and running:
+
+- **Flask** on port **5000**
+- **FastAPI** on port **6000**
 
 ### Flask vs FastAPI benchmarks
 
@@ -514,7 +538,7 @@ Total time: 6.3417487144470215
 
 ```
 
-Here we see an average time of **~6.5 secs for 1k requests with a Flask app** with a single thread and a single process.
+Here we see an average time of **~6.5 secs for 1k requests with a Flask app** with a default [Flask development web server](https://flask.palletsprojects.com/en/2.2.x/api/#flask.Flask.run) (later we will see what it means, but we keep it with default config for now).
 
 Now let's run it against FastAPI:
 
@@ -533,7 +557,9 @@ $ python send_requests.py -n 1000 --port 6000
 Total time: 4.3278844356536865
 ```
 
-With same condition we see an average **~4.7 secs with FastAPI**. Some insights:
+Now we see an average **~4.7 secs with FastAPI** with a FastAPI API running with default [uvicorn](https://www.uvicorn.org/settings/) settings.
+
+Some insights:
 
 - We see an improvement in FastAPI but not significant
 - There are no IO operations, so we can't see the real magic of async in place... so this example is not reflecting what we are looking for
@@ -601,7 +627,7 @@ Mmmm... this doesn't look good, why we want async if it takes the same amount of
 
 #### 3. Async client
 
-Well, we have not changed how we are doing the requests yet. We are using a sync library to do the requests, our `requests` library is waiting in each request to get the response before running a new one. This goes against of what we want! We want to trigger multiple requests at the same time and with async we can do it, but our client has to support coroutines. So let's bring `aiohttp` to the playground:
+Well, we have not changed how we are doing the requests yet. We are using a sync library to do the requests, our `requests` library is waiting in each request to get the response before running a new one. This goes against of what we want! We want to trigger multiple requests at the same time and with async we can do it, but our client has to support coroutines. So let's use `aiohttp` again:
 
 ``` python linenums="1" title="send_async_requests.py"
 import time
@@ -613,24 +639,19 @@ async def fetch(session, url):
     async with session.get(url) as response:
         return await response.text()
 
-async def do_requests(num_requests, port, loop):
-    time_start = time.time()
+async def main(num_requests, port):
+    start_time = time.time()
     url = f"http://localhost:{port}/"
-    async with aiohttp.ClientSession(loop=loop) as session:
-        results = await asyncio.gather(
-            *[fetch(session, url) for _ in range(num_requests)]
-        )
-        print(f"Total time: {time.time() - time_start}")
-        return results
+    async with aiohttp.ClientSession() as session:
+        results = await asyncio.gather(*[fetch(session, url) for i in range(num_requests)])
+    print(f"Total time: {time.time() - start_time}")
 
 
 parser = ArgumentParser()
 parser.add_argument("-n", type=int)
 parser.add_argument("-p", "--port", type=int)
 args = parser.parse_args()
-loop = asyncio.get_event_loop()
-results = loop.run_until_complete(do_requests(args.n, args.port, loop))
-loop.close()
+x = asyncio.run(main(args.n, args.port))
 ```
 
 Now let's run async requests against Flask which is not capable of handling async requests:
@@ -658,9 +679,9 @@ Ok, there's a huge improvement when using an async client:
 - Flask: from 19 secs to 1.3 (with 10k it's ~13 secs) -> **x14 times more requests with Flask**
 - FastAPI: from 19 secs to 0.9 (with 10k it's ~9 secs) -> **x21 times more requests with FastAPI**
 
-Ok, here we are in the same situation that we've seen, FastAPI is a bit faster than Flask but not this huge impact that we would expect by this complexity layer of the whole async world. Why this hype with async? Is it really only a 25-30% faster than Flask? What means faster? Can we improve it with Kubernetes? (joking).
+Ok, here we are in the same situation that we've seen, FastAPI is a bit faster than Flask but not this huge impact that we would expect by this complexity layer of the whole async world. Why this hype with async? Is it really only a 25-30% faster than Flask? What means faster?
 
-Something being "faster" is relative, right?
+Something being "faster" is relative, right? Let's see a different case, with different logic in the endpoint.
 
 #### 4. Endpoint with multiple IO operations
 
@@ -686,16 +707,13 @@ async def root():
 
 And in the `send_async_request.py` let's specify to the `aiohttp.ClientSession` to send all the requests at once changing the limit of the connector:
 ``` python linenums="10" title="send_async_requests.py"
-async def do_requests(num_requests, port, loop):
-    time_start = time.time()
+async def main(num_requests, port):
+    start_time = time.time()
     url = f"http://localhost:{port}/"
     connector = aiohttp.TCPConnector(limit=num_requests)  # default is 100, let's send all at once
-    async with aiohttp.ClientSession(loop=loop, connector=connector) as session:
-        results = await asyncio.gather(
-            *[fetch(session, url) for _ in range(num_requests)]
-        )
-        print(f"Total time: {time.time() - time_start}")
-        return results
+    async with aiohttp.ClientSession(connector=connector) as session:
+        results = await asyncio.gather(*[fetch(session, url) for i in range(num_requests)])
+    print(f"Total time: {time.time() - start_time}")
 ```
 
 If we run it again we have:
@@ -726,9 +744,15 @@ Here we start to see some improvements, we can perform 1k requests:
 - **in FastAPI in ~2.4 secs**
 - **in Flask in ~12 secs**
 
-This is because each `sleep(1)` in FastAPI can be awaited, so all the IO operations can delegate the execution to another request. In Flask we have to wait all those seconds.
+Much better performance now with FastAPI.
 
-Also arrived to this point, is worth it to mention that Flask development web server is using threads by default, that's the reason of seeing 1k requests with 10 secs of sleep each one resolved in 12 secs, in a totally synchronous program it would take 1_000 * 10 -> 10_000 secs.
+Also arrived to this point, it is worth to mention that Flask development web server is using threads by default (the amount of threads used depends on how many threads your machine can handle), that's the reason of seeing 1k requests with 10 secs of sleep each one resolved in 12 secs, in a totally synchronous program it would take 1_000 * 10 -> 10_000 secs.
+
+What we are seeing here is the comparison of concurrency using coroutines in FastAPI and threads in Flask when having to process 10 IO operations * 1k requests, which means 10k IO operations concurrently.
+
+We see in this specific case that FastAPI with coroutines has much higher throughput than Flask using threads, and in general, we can say that coroutines manage better the context switching than threads.
+
+What is sure here is that after the learnings of WSGI and synchronous frameworks, smarter guys than us have decided to implement a new protocol called ASGI which replaces WSGI, and FastAPI has been released 8 years after Flask with all these learnings being totally async.
 
 #### 5. Flask single-thread vs FastAPI single-thread (spoiler: this is the sexy chapter)
 
@@ -764,7 +788,7 @@ aiohttp.client_exceptions.ClientOSError: [Errno 104] Connection reset by peer
 
 Which means that our Flask server is not answering to our requests.
 
-This is the real problem, when our server is full loaded and can't take more requests, and the biggest problem here, or what is more worrying is that indeed, the server is not really working, is just waiting! Is lazing around, waiting for a 3rd program to deliver the needed goods. Like a waiter that orders a dish to the kitchen and waits there idle for the whole 5 minutes that can take preparing that dish instead of doing other things in the meantime.
+This is the real problem, when our server is full loaded and can't take more requests there are requests that just die, and the worst of this is that the server is not really working, is just waiting! Is lazing around, waiting for a 3rd program to deliver the needed goods. Like a waiter that orders a dish to the kitchen and waits there idle for the whole 5 minutes that can take preparing that dish instead of doing other things in the meantime.
 
 So:
 
@@ -784,7 +808,7 @@ We have that:
     - takes 2.4 seconds to process
     - not a single request gets a timeout
 
-I've not raised the fact that Flask is working with multithread mode by default because indeed comparing 1 thread of FastAPI vs 1 thread of Flask is not fair, because is very common to configure the wsgi app to work with threads, which perform a good concurrency job. When a thread hits networking it switches to another thread, so it's similar to how async await works. But I wanted to show it just to demonstrate the real difference of 1 thread async vs 1 thread sync.
+I've not raised until now the fact that Flask is working with threaded mode by default because indeed comparing 1 thread of FastAPI vs 1 thread of Flask is not fair, because is very common to configure the wsgi app to work with threads, which perform a good concurrency job. When a thread hits networking it switches to another thread, so it's similar to how async await works. But I wanted to show it just to demonstrate the real difference of 1 thread async vs 1 thread sync.
 
 ## Conclusions
 
