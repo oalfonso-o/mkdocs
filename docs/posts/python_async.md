@@ -127,7 +127,7 @@ So we can concurrently have 10 "sleeps" in just 3 seconds. The sleep could be re
 
 This concept looks simple, but it can become extremely complicated when having to define this kind of tasks for other operations more complicated than a simple wait. For example doing an HTTP request or a query to a database.
 
-For an HTTP request we normally use `requests` library or `urllib3` because it's the builtin, but both are blocking, so we will have to wait until each request finishes. To be able to do requests concurrently we need to implement something like what we've seen in this snippet but for performing an HTTP request non blocking. And this is what does `aiohttp` which uses sockets to retrieve the data of that request in a non-blocking manner. For more details of this library you can check the code on Github [https://github.com/aio-libs/aiohttp]().
+For an HTTP request we normally use `requests` library or `urllib3` because it's the builtin, but both are blocking, so we will have to wait until each request finishes. To be able to do requests concurrently we need to implement something like what we've seen in this snippet but for performing an HTTP request non blocking. And this is what does `aiohttp` which uses sockets to retrieve the data of that request in a non-blocking manner. For more details of this library you can check the code on Github [https://github.com/aio-libs/aiohttp](https://github.com/aio-libs/aiohttp).
 
 But here we are going too fast, let's not jump yet to `aiohttp`, let's try to understand better how coroutines work, because we've seen how to do sleeps concurrently but we've not seen any `yield` nor generator. Let's see another example and we will understand how `yield` plays in this game and what coroutines are.
 
