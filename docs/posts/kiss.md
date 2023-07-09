@@ -131,7 +131,7 @@ Pros of this:
 
 Cons of this:
 
-- to check the deliveries you have to check 2 different tools, because two different people are managing 2 different types of deliveries, and eventually they are not going to be in sync
+- to check the deliveries you have to check different tools, because two different people are managing 2 different types of deliveries, and eventually they are not going to be in sync
 - to check all the tasks you have to check 4 different tools (spreadsheet, basecamp, the board and jira) and hope for having everything in sync
 - eventually these 3 people will do changes in their own systems without reflecting the changes in the other systems
 - this is very time consuming and frustrating when we can't gather the desired data
