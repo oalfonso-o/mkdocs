@@ -9,7 +9,7 @@ Other applications more professional do the same with many more features like [A
 
 This app starts when the gym just started, initially was a formal replacement for the ongoing [Doodle](https://doodle.com/en/) that worked fine, but at some point it couldn't scale.
 
-Unfortunately, after 4 years of good service and developing multiple extra features for this application, we decided to deprecate this app in favor of WodBuster, a much more mature solution with a better trade-off between cost and features. So now this application is not anymore in production but it has been successfully up and running this whole time without even a single day down.
+Unfortunately, after 4 years of good service and developing multiple extra features for this application, we decided to deprecate this app in favor of WodBuster, a much more mature solution with a better trade-off between cost and features. So now this application is not anymore in production but it has been successfully up and running this whole time.
 
 <figure markdown>
   ![Landing page](../assets/crossbox_landing.png){: .center loading=lazy width=30% }
