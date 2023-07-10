@@ -8,8 +8,8 @@ Walkthrough of the setup of a custom mailserver from scratch, explaining all the
 * [Ansible](ansible.md):
 Tutorial with the basics of Ansible, explaining the importance of defining the configuration of a deployment as code.
 
-* [Terraform](terraform.md):
-101 of Terraform in the simple way, just to explain how easy is to define our own AWS resources as code to keep track of everything.
+<!-- * [Terraform](terraform.md):
+101 of Terraform in the simple way, just to explain how easy is to define our own AWS resources as code to keep track of everything. -->
 
 <!-- * [Spark](spark.md):
 All the needed baby steps to be able to run Spark Python Applications in a distributed cluster using YARN, parquet files and Hadoop with S3. -->

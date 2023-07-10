@@ -14,9 +14,6 @@ Walkthrough of the setup of a custom mailserver from scratch, explaining all the
 * [Ansible](http://oalfonso.com/posts/ansible):
 Tutorial with the basics of Ansible, explaining the importance of defining the configuration of a deployment as code.
 
-* [Terraform](http://oalfonso.com/posts/terraform):
-101 of Terraform in the simple way, just to explain how easy is to define our own AWS resources as code to keep track of everything.
-
 * [Python coroutines and asyncio](http://oalfonso.com/posts/python_async):
 Understanding how asyncio works and its benefits. Checking how much performance improvement we can get of a single thread when running multiple IO operations async in Python vs a single process with locking IO operations.
 
