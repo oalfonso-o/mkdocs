@@ -1,17 +1,15 @@
-# Oriol Alfonso
+# Hi! I'm Oriol Alfonso :wave:
 
-Here you can find some relevant information about my career as a Software Engineer.
+A software developer from Barcelona <img src="assets/flag_catalonia.png" style="width: 20px;"/>
 
-Some posts of interesting topics and technologies in [Posts](posts/index.md)
+Here I have some **[posts](posts/index.md)** about IT topics
 
-Some personal side projects are explained in [Projects](projects/index.md)
+and some side **[projects](projects/index.md)** mostly in Python
 
-And an extract of my career can be found in [About](about.md)
+Feel free to contact me 🤓
 
-Feel free to reach me out to make me any question or to discuss anything IT related, I'll be more than happy to answer:
-
-- email: [oriol@oalfonso.com](mailto:oriol@oalfonso.com){target=_blank}
-- github: [oalfonso-o](https://github.com/oalfonso-o){target=_blank}
-- twitter: [@oalfonso_o](https://twitter.com/oalfonso_o){target=_blank}
-- linkedin: [Oriol Alfonso Riba](https://www.linkedin.com/in/oriol-alfonso-riba-a198439b/){target=_blank}
-- instagram: [oalfonso_o](https://www.instagram.com/oalfonso_o/){target=_blank}
+- Email: [oriol@oalfonso.com](mailto:oriol@oalfonso.com){target=_blank}
+- GitHub: [oalfonso-o](https://github.com/oalfonso-o){target=_blank}
+- Twitter: [@oalfonso_o](https://twitter.com/oalfonso_o){target=_blank}
+- LinkedIn: [Oriol Alfonso Riba](https://www.linkedin.com/in/oriol-alfonso-riba-a198439b/){target=_blank}
+- Instagram: [oalfonso_o](https://www.instagram.com/oalfonso_o/){target=_blank}

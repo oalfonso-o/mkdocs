@@ -6,12 +6,11 @@ nav:
     - index.md
     - Posts: posts/index.md
     - Projects: projects/index.md
-    - About: about.md
   - Posts:
     - posts/index.md
     - Mail Server with Postfix and Dovecot: posts/mailserver.md
     - Ansible: posts/ansible.md
-    - Terraform: posts/terraform.md
+    # - Terraform: posts/terraform.md
     # - Spark: posts/spark.md
     - Python coroutines and asyncio: posts/python_async.md
     # - Python Multiprocessing: posts/python_async.md
@@ -29,7 +28,6 @@ nav:
     - Crossbox: projects/crossbox.md
     - Balaland: projects/balaland.md
     - Candlebot: projects/candlebot.md
-  - About: about.md
 theme:
   name: material
   icon:
