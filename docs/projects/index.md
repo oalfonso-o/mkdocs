@@ -12,4 +12,7 @@ PyGame 2D shooter game that tries to emulate what would be to play a 3D 1st pers
 Still work in progress.
 
 * [Candlebot](candlebot.md):
-Experimental backtesting app to gather historical market crypto prices from multiple CEX sources like Binance, define custom investing strategies based on indicators and run these parametrized strategies to backtest them against the historical prices fluctations and extract statistics of success. Interesting a fun project but nothing profitable at all.
+Experimental backtesting app to gather historical market crypto prices from multiple CEX sources like Binance, define custom investing strategies based on indicators and run these parametrized strategies to backtest them against the historical prices fluctuations and extract statistics of success. Interesting a fun project but nothing profitable at all.
+
+* [PySpark Diff](pyspark_diff.md):
+Python library to compare two pyspark dataframes and their nested items recursively giving an output that explains which nested key differs.

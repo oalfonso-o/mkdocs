@@ -28,6 +28,7 @@ nav:
     - Crossbox: projects/crossbox.md
     - Balaland: projects/balaland.md
     - Candlebot: projects/candlebot.md
+    - PySpark Diff: projects/pyspark_diff.md
 theme:
   name: material
   icon:
