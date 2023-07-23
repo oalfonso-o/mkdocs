@@ -11,5 +11,5 @@ Feel free to contact me 🤓
 - Email: [oriol@oalfonso.com](mailto:oriol@oalfonso.com){target=_blank}
 - GitHub: [oalfonso-o](https://github.com/oalfonso-o){target=_blank}
 - Twitter: [@oalfonso_o](https://twitter.com/oalfonso_o){target=_blank}
-- LinkedIn: [Oriol Alfonso Riba](https://www.linkedin.com/in/oriol-alfonso-riba-a198439b/){target=_blank}
+- LinkedIn: [Oriol Alfonso Riba](https://www.linkedin.com/in/oalfonso/){target=_blank}
 - Instagram: [oalfonso_o](https://www.instagram.com/oalfonso_o/){target=_blank}
