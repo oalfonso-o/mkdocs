@@ -1,6 +1,6 @@
-# Documentation: posts and projects
+# Documentation: projects and posts
 
-In this site there are posts and project that I found relevant to write something about them
+In this site there are projects and posts that I found relevant to write something about them
 
 This site is published in https://oalfonso.com
 
