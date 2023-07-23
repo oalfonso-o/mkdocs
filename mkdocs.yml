@@ -6,6 +6,13 @@ nav:
     - index.md
     - Posts: posts/index.md
     - Projects: projects/index.md
+  - Projects:
+    - projects/index.md
+    - Patata: projects/patata.md
+    - PySpark Diff: projects/pyspark_diff.md
+    - Crossbox: projects/crossbox.md
+    - Balaland: projects/balaland.md
+    - Candlebot: projects/candlebot.md
   - Posts:
     - posts/index.md
     - Mail Server with Postfix and Dovecot: posts/mailserver.md
@@ -23,13 +30,6 @@ nav:
     # - Team Culture: posts/team_culture.md
     # - Kafka: posts/kafka.md
     # - Airflow: posts/airflow.md
-  - Projects:
-    - projects/index.md
-    - Patata: projects/patata.md
-    - PySpark Diff: projects/pyspark_diff.md
-    - Crossbox: projects/crossbox.md
-    - Balaland: projects/balaland.md
-    - Candlebot: projects/candlebot.md
 theme:
   name: material
   icon:

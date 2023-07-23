@@ -2,9 +2,9 @@
 
 A software developer from Barcelona <img src="assets/flag_catalonia.png" style="width: 20px;"/>
 
-Here I have some **[posts](posts/index.md)** about IT topics
+Here I have some side **[projects](projects/index.md)**
 
-and some side **[projects](projects/index.md)** mostly in Python
+and some **[posts](posts/index.md)** about IT topics
 
 Feel free to contact me 🤓
 

@@ -7,20 +7,6 @@ This site is published in https://oalfonso.com
 Used [mkdocs](http://www.mkdocs.org/) to generate the site
 
 
-## Posts
-* [Mail Server with Postfix and Dovecot](https://oalfonso.com/posts/mailserver):
-Walkthrough of the setup of a custom mailserver from scratch, explaining all the bases needed for sending your own emails to anywhere without being tagged as spam and also being able to receive mails from anyone.
-
-* [Ansible](https://oalfonso.com/posts/ansible):
-Tutorial with the basics of Ansible, explaining the importance of defining the configuration of a deployment as code.
-
-* [Python coroutines and asyncio](https://oalfonso.com/posts/python_async):
-Understanding how asyncio works and its benefits. Checking how much performance improvement we can get of a single thread when running multiple IO operations async in Python vs a single process with locking IO operations.
-
-* [KISS](https://oalfonso.com/posts/kiss):
-Keep It Simple, Stupid. Explaining the importance of understanding the problem before proposing a solution via ficticional scenarios based on real life experiences.
-
-
 ## Projects
 
 * [Patata](patata.md):
@@ -40,3 +26,17 @@ Still work in progress.
 
 * [Candlebot](https://oalfonso.com/projects/candlebot):
 Experimental backtesting app to gather historical market crypto prices from multiple CEX sources like Binance, define custom investing strategies based on indicators and run these parametrized strategies to backtest them against the historical prices fluctations and extract statistics of success. Interesting a fun project but nothing profitable at all.
+
+
+## Posts
+* [Mail Server with Postfix and Dovecot](https://oalfonso.com/posts/mailserver):
+Walkthrough of the setup of a custom mailserver from scratch, explaining all the bases needed for sending your own emails to anywhere without being tagged as spam and also being able to receive mails from anyone.
+
+* [Ansible](https://oalfonso.com/posts/ansible):
+Tutorial with the basics of Ansible, explaining the importance of defining the configuration of a deployment as code.
+
+* [Python coroutines and asyncio](https://oalfonso.com/posts/python_async):
+Understanding how asyncio works and its benefits. Checking how much performance improvement we can get of a single thread when running multiple IO operations async in Python vs a single process with locking IO operations.
+
+* [KISS](https://oalfonso.com/posts/kiss):
+Keep It Simple, Stupid. Explaining the importance of understanding the problem before proposing a solution via ficticional scenarios based on real life experiences.

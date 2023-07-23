@@ -1,6 +1,6 @@
 # Projects
 
-Here I'll write about some personal side-projects
+Here few details of personal side-projects
 
 * [Patata](patata.md):
 Python library to perform parallel and concurrent http requests using multiprocessing and coroutines to maximize the throughput of requests.
