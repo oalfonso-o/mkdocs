@@ -22,6 +22,13 @@ Keep It Simple, Stupid. Explaining the importance of understanding the problem b
 
 
 ## Projects
+
+* [Patata](patata.md):
+Python library to perform parallel and concurrent http requests using multiprocessing and coroutines to maximize the throughput of requests.
+
+* [PySpark Diff](pyspark_diff.md):
+Python library to compare two pyspark dataframes and their nested items recursively giving an output that explains which nested key differs.
+
 * [Crossbox](https://oalfonso.com/projects/crossbox):
 Django webapp with Stripe payments that scaled a gym business from 30 users
 up to 500 users in matter of months automating all the manual work of handling
@@ -33,6 +40,3 @@ Still work in progress.
 
 * [Candlebot](https://oalfonso.com/projects/candlebot):
 Experimental backtesting app to gather historical market crypto prices from multiple CEX sources like Binance, define custom investing strategies based on indicators and run these parametrized strategies to backtest them against the historical prices fluctations and extract statistics of success. Interesting a fun project but nothing profitable at all.
-
-* [PySpark Diff](pyspark_diff.md):
-Python library to compare two pyspark dataframes and their nested items recursively giving an output that explains which nested key differs.
