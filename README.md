@@ -25,7 +25,7 @@ PyGame 2D shooter game that tries to emulate what would be to play a 3D 1st pers
 Still work in progress.
 
 * [Candlebot](https://oalfonso.com/projects/candlebot):
-Experimental backtesting app to gather historical market crypto prices from multiple CEX sources like Binance, define custom investing strategies based on indicators and run these parametrized strategies to backtest them against the historical prices fluctations and extract statistics of success. Interesting a fun project but nothing profitable at all.
+Experimental backtesting app to gather historical market crypto prices from multiple CEX sources like Binance, define custom investing strategies based on indicators and run these parametrized strategies to backtest them against the historical prices fluctuations and extract statistics of success. Interesting a fun project but nothing profitable at all.
 
 
 ## Posts
@@ -39,4 +39,4 @@ Tutorial with the basics of Ansible, explaining the importance of defining the c
 Understanding how asyncio works and its benefits. Checking how much performance improvement we can get of a single thread when running multiple IO operations async in Python vs a single process with locking IO operations.
 
 * [KISS](https://oalfonso.com/posts/kiss):
-Keep It Simple, Stupid. Explaining the importance of understanding the problem before proposing a solution via ficticional scenarios based on real life experiences.
+Keep It Simple, Stupid. Explaining the importance of understanding the problem before proposing a solution via fictional scenarios based on real life experiences.
