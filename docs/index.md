@@ -1,12 +1,10 @@
 # Hi! I'm Oriol Alfonso
 
-A software developer from Barcelona <img src="assets/flag_catalonia.png" style="width: 20px;"/>
+A software engineer from Barcelona <img src="assets/flag_catalonia.png" style="width: 20px;"/>
 
-Here I have some side **[projects](projects/index.md)**
+Here I have some side **[projects](projects/index.md)** and some **[posts](posts/index.md)** about software development related topics that I enjoyed coding/writing
 
-and some **[posts](posts/index.md)** about IT topics
-
-Feel free to contact me
+And here my contact details in case you want to reach me:
 
 - Email: [oriol@oalfonso.com](mailto:oriol@oalfonso.com){target=_blank}
 - GitHub: [oalfonso-o](https://github.com/oalfonso-o){target=_blank}
